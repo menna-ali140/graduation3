@@ -2891,6 +2891,325 @@
 
 
 
+// import React, { useState, useEffect } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
+// import 'leaflet/dist/leaflet.css';
+// import { useIncident } from '../context/IncidentContext';
+// import { useT } from '../context/AppContext';
+// import { API_BASE_URL, getAuthHeaders } from '../config/api';
+
+// const FlyToIncident = ({ incident }) => {
+//   const map = useMap();
+//   useEffect(() => {
+//     if (incident?.latLng) {
+//       map.flyTo(incident.latLng, 15, { animate: true, duration: 1 });
+//     }
+//   }, [incident, map]);
+//   return null;
+// };
+
+// const HeatmapLayer = ({ incidents, getMarkerColor }) => (
+//   <>
+//     {incidents.map(inc => (
+//       <React.Fragment key={`heat-${inc.id}`}>
+//         <CircleMarker center={inc.latLng} radius={45}
+//           pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.06, color: 'transparent', weight: 0 }}
+//           interactive={false} />
+//         <CircleMarker center={inc.latLng} radius={25}
+//           pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.14, color: 'transparent', weight: 0 }}
+//           interactive={false} />
+//         <CircleMarker center={inc.latLng} radius={12}
+//           pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.30, color: 'transparent', weight: 0 }}
+//           interactive={false} />
+//       </React.Fragment>
+//     ))}
+//   </>
+// );
+
+// const getMarkerColor = (type) => {
+//   switch (type) {
+//     case 'Fire':           return '#ef4444';
+//     case 'Crime':          return '#1e293b';
+//     case 'Medical':        return '#f97316';
+//     case 'Road Damage':    return '#f59e0b';
+//     case 'Infrastructure': return '#06b6d4';
+//     default:               return '#06b6d4';
+//   }
+// };
+
+// const getTypeIcon = (type) => {
+//   switch (type) {
+//     case 'Fire':        return 'local_fire_department';
+//     case 'Medical':     return 'emergency';
+//     case 'Crime':       return 'gavel';
+//     case 'Road Damage': return 'road';
+//     default:            return 'construction';
+//   }
+// };
+
+// const getStatusStyle = (status) => {
+//   switch (status) {
+//     case 'Active':      return { bg: '#fee2e2', text: '#b91c1c' };
+//     case 'Pending':     return { bg: '#fef9c3', text: '#92400e' };
+//     case 'Resolved':    return { bg: '#dcfce7', text: '#15803d' };
+//     case 'In Progress': return { bg: '#dbeafe', text: '#1d4ed8' };
+//     default:            return { bg: '#f3f4f6', text: '#374151' };
+//   }
+// };
+
+// const IncidentMap = () => {
+//   const navigate = useNavigate();
+//   const { selectIncident } = useIncident();
+//   const t = useT();
+//   const [searchQuery, setSearchQuery]           = useState('');
+//   const [isHeatmapEnabled, setIsHeatmapEnabled] = useState(false);
+//   const [apiIncidents, setApiIncidents]         = useState([]);
+//   const [localSelected, setLocalSelected]       = useState(null);
+//   const [cardVisible, setCardVisible]           = useState(false);
+
+//   useEffect(() => {
+//     const fetchIncidents = async () => {
+//       try {
+//         const response = await fetch(`${API_BASE_URL}/Map/GetReportsMapData`, {
+//           headers: getAuthHeaders(),
+//         });
+//         const data = await response.json();
+//         const formattedData = data.map(item => ({
+//           id:          item.id.toString(),
+//           type:        item.category,
+//           status:      item.status,
+//           latLng:      [item.latitude, item.longitude],
+//           time:        new Date(item.date).toLocaleString('en-GB', {
+//                          hour: '2-digit', minute: '2-digit',
+//                          day: '2-digit', month: '2-digit',
+//                        }),
+//           // ✅ location من الـ API مباشرة
+//           location:    item.location || `${item.latitude?.toFixed(4)}, ${item.longitude?.toFixed(4)}`,
+//           // ✅ title و description من الـ API
+//           title:       item.title || item.category,
+//           description: item.description || '',
+//         }));
+//         setApiIncidents(formattedData);
+//       } catch (err) {
+//         console.log('Error fetching API:', err);
+//       }
+//     };
+//     fetchIncidents();
+//   }, []);
+
+//   const handleSearch = (query) => {
+//     setSearchQuery(query);
+//     if (!query.trim()) return;
+//     const found = apiIncidents.find(inc =>
+//       inc.id.toLowerCase().includes(query.toLowerCase())
+//     );
+//     if (found) handleSelectIncident(found);
+//   };
+
+//   const handleSelectIncident = (inc) => {
+//     setCardVisible(false);
+//     setTimeout(() => {
+//       setLocalSelected(inc);
+//       selectIncident(inc);
+//       setCardVisible(true);
+//     }, localSelected ? 150 : 0);
+//   };
+
+//   const handleCloseCard = () => {
+//     setCardVisible(false);
+//     setTimeout(() => {
+//       setLocalSelected(null);
+//       selectIncident(null);
+//     }, 300);
+//   };
+
+//   const handleViewFullReport = () => {
+//     if (localSelected) navigate(`/reports/${localSelected.id}`);
+//   };
+
+//   return (
+//     <div className="relative w-full h-screen overflow-hidden">
+
+//       {/* Search Box */}
+//       <div className="absolute top-4 left-4 w-full max-w-sm z-[1000] pointer-events-auto">
+//         <div className="flex w-full h-12 items-stretch rounded-xl shadow-lg">
+//           <div className="flex bg-white items-center justify-center pl-4 rounded-l-xl border border-r-0 border-gray-200">
+//             <span className="material-symbols-outlined text-gray-400">search</span>
+//           </div>
+//           <input
+//             className="flex-1 rounded-r-xl border border-l-0 border-gray-200 bg-white h-full px-4 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#022F72]"
+//             placeholder="Search by incident ID..."
+//             value={searchQuery}
+//             onChange={(e) => handleSearch(e.target.value)}
+//           />
+//         </div>
+//       </div>
+
+//       {/* Heatmap Toggle */}
+//       <div className="absolute top-4 right-4 z-[1000] pointer-events-auto">
+//         <div className="bg-white rounded-xl shadow-lg flex items-center px-3 py-2 gap-2 border border-gray-200">
+//           <span className="material-symbols-outlined text-orange-500 text-xl">local_fire_department</span>
+//           <label className="relative inline-flex items-center cursor-pointer">
+//             <input
+//               type="checkbox"
+//               className="sr-only peer"
+//               checked={isHeatmapEnabled}
+//               onChange={() => setIsHeatmapEnabled(v => !v)}
+//             />
+//             <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-[#022F72] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+//           </label>
+//           <span className="text-sm font-medium text-gray-700">Heatmap</span>
+//         </div>
+//       </div>
+
+//       {/* Map */}
+//       <MapContainer
+//         center={[30.0444, 31.2357]}
+//         zoom={12}
+//         style={{ height: '100%', width: '100%' }}
+//         zoomControl={true}
+//       >
+//         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+//         <FlyToIncident incident={localSelected} />
+
+//         {isHeatmapEnabled && (
+//           <HeatmapLayer incidents={apiIncidents} getMarkerColor={getMarkerColor} />
+//         )}
+
+//         {apiIncidents.map(inc => {
+//           const isSelected = localSelected?.id === inc.id;
+//           return (
+//             <CircleMarker
+//               key={inc.id}
+//               center={inc.latLng}
+//               radius={isSelected ? 13 : 9}
+//               pathOptions={{
+//                 fillColor:   getMarkerColor(inc.type),
+//                 fillOpacity: 0.9,
+//                 color:       isSelected ? '#022F72' : 'white',
+//                 weight:      isSelected ? 3 : 2,
+//               }}
+//               eventHandlers={{ click: () => handleSelectIncident(inc) }}
+//             >
+//               <Popup>
+//                 <strong>{inc.title}</strong><br />
+//                 {inc.description}<br />
+//                 <small>ID: {inc.id}</small>
+//               </Popup>
+//             </CircleMarker>
+//           );
+//         })}
+//       </MapContainer>
+
+//       {/* ✅ الكارد — بيطلع من تحت لما تضغط على نقطة */}
+//       {localSelected && (
+//         <div
+//           className="absolute bottom-0 left-0 right-0 z-[1000] pointer-events-auto transition-transform duration-300 ease-out"
+//           style={{ transform: cardVisible ? 'translateY(0)' : 'translateY(100%)' }}
+//         >
+//           <div
+//             className="bg-white shadow-2xl border-t border-gray-100 px-6 py-5"
+//             style={{ borderRadius: '20px 20px 0 0' }}
+//           >
+//             {/* Handle bar */}
+//             <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
+
+//             {/* Close */}
+//             <button
+//               onClick={handleCloseCard}
+//               className="absolute top-5 right-5 p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
+//             >
+//               <span className="material-symbols-outlined text-xl">close</span>
+//             </button>
+
+//             <div className="flex items-start gap-4">
+//               {/* أيقونة */}
+//               <div
+//                 className="flex items-center justify-center size-12 rounded-xl flex-shrink-0 mt-1"
+//                 style={{ backgroundColor: getMarkerColor(localSelected.type) + '20' }}
+//               >
+//                 <span
+//                   className="material-symbols-outlined text-2xl"
+//                   style={{ color: getMarkerColor(localSelected.type) }}
+//                 >
+//                   {getTypeIcon(localSelected.type)}
+//                 </span>
+//               </div>
+
+//               {/* التفاصيل */}
+//               <div className="flex-grow min-w-0 pr-8">
+
+//                 {/* ✅ Title + type badge + status badge */}
+//                 <div className="flex items-center gap-2 flex-wrap mb-1">
+//                   <h2 className="text-base font-bold text-gray-900">
+//                     {localSelected.title}
+//                   </h2>
+//                   <span
+//                     className="text-xs font-semibold px-2 py-0.5 rounded-full"
+//                     style={{
+//                       backgroundColor: getMarkerColor(localSelected.type) + '20',
+//                       color:           getMarkerColor(localSelected.type),
+//                     }}
+//                   >
+//                     {t.translateApiValue(localSelected.type)}
+//                   </span>
+//                   <span
+//                     className="text-xs font-semibold px-2 py-0.5 rounded-full"
+//                     style={{
+//                       backgroundColor: getStatusStyle(localSelected.status).bg,
+//                       color:           getStatusStyle(localSelected.status).text,
+//                     }}
+//                   >
+//                     {t.translateApiValue(localSelected.status)}
+//                   </span>
+//                 </div>
+
+//                 {/* ✅ Description */}
+//                 {localSelected.description && (
+//                   <p className="text-sm text-gray-600 mb-2 leading-snug">
+//                     {localSelected.description}
+//                   </p>
+//                 )}
+
+//                 {/* ✅ Location كنص + وقت */}
+//                 <div className="flex items-center gap-4 text-xs text-gray-500 flex-wrap">
+//                   <span className="flex items-center gap-1">
+//                     <span className="material-symbols-outlined text-sm">location_on</span>
+//                     {localSelected.location}
+//                   </span>
+//                   <span className="flex items-center gap-1">
+//                     <span className="material-symbols-outlined text-sm">calendar_today</span>
+//                     {localSelected.time}
+//                   </span>
+//                 </div>
+//               </div>
+
+//               {/* زر التقرير */}
+//               <div className="flex-shrink-0 self-center">
+//                 <button
+//                   onClick={handleViewFullReport}
+//                   className="bg-[#022F72] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#022F72]/90 transition-colors whitespace-nowrap"
+//                 >
+//                   View Full Report
+//                 </button>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default IncidentMap;
+
+
+
+
+
+
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, CircleMarker, Popup, useMap } from 'react-leaflet';
@@ -2902,9 +3221,7 @@ import { API_BASE_URL, getAuthHeaders } from '../config/api';
 const FlyToIncident = ({ incident }) => {
   const map = useMap();
   useEffect(() => {
-    if (incident?.latLng) {
-      map.flyTo(incident.latLng, 15, { animate: true, duration: 1 });
-    }
+    if (incident?.latLng) map.flyTo(incident.latLng, 15, { animate: true, duration: 1 });
   }, [incident, map]);
   return null;
 };
@@ -2913,50 +3230,17 @@ const HeatmapLayer = ({ incidents, getMarkerColor }) => (
   <>
     {incidents.map(inc => (
       <React.Fragment key={`heat-${inc.id}`}>
-        <CircleMarker center={inc.latLng} radius={45}
-          pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.06, color: 'transparent', weight: 0 }}
-          interactive={false} />
-        <CircleMarker center={inc.latLng} radius={25}
-          pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.14, color: 'transparent', weight: 0 }}
-          interactive={false} />
-        <CircleMarker center={inc.latLng} radius={12}
-          pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.30, color: 'transparent', weight: 0 }}
-          interactive={false} />
+        <CircleMarker center={inc.latLng} radius={45} pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.06, color: 'transparent', weight: 0 }} interactive={false} />
+        <CircleMarker center={inc.latLng} radius={25} pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.14, color: 'transparent', weight: 0 }} interactive={false} />
+        <CircleMarker center={inc.latLng} radius={12} pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.30, color: 'transparent', weight: 0 }} interactive={false} />
       </React.Fragment>
     ))}
   </>
 );
 
-const getMarkerColor = (type) => {
-  switch (type) {
-    case 'Fire':           return '#ef4444';
-    case 'Crime':          return '#1e293b';
-    case 'Medical':        return '#f97316';
-    case 'Road Damage':    return '#f59e0b';
-    case 'Infrastructure': return '#06b6d4';
-    default:               return '#06b6d4';
-  }
-};
-
-const getTypeIcon = (type) => {
-  switch (type) {
-    case 'Fire':        return 'local_fire_department';
-    case 'Medical':     return 'emergency';
-    case 'Crime':       return 'gavel';
-    case 'Road Damage': return 'road';
-    default:            return 'construction';
-  }
-};
-
-const getStatusStyle = (status) => {
-  switch (status) {
-    case 'Active':      return { bg: '#fee2e2', text: '#b91c1c' };
-    case 'Pending':     return { bg: '#fef9c3', text: '#92400e' };
-    case 'Resolved':    return { bg: '#dcfce7', text: '#15803d' };
-    case 'In Progress': return { bg: '#dbeafe', text: '#1d4ed8' };
-    default:            return { bg: '#f3f4f6', text: '#374151' };
-  }
-};
+const getMarkerColor = (type) => ({ Fire: '#ef4444', Crime: '#1e293b', Medical: '#f97316', 'Road Damage': '#f59e0b', Infrastructure: '#06b6d4' }[type] || '#06b6d4');
+const getTypeIcon   = (type) => ({ Fire: 'local_fire_department', Medical: 'emergency', Crime: 'gavel', 'Road Damage': 'road' }[type] || 'construction');
+const getStatusStyle = (status) => ({ Active: { bg: '#fee2e2', text: '#b91c1c' }, Pending: { bg: '#fef9c3', text: '#92400e' }, Resolved: { bg: '#dcfce7', text: '#15803d' }, 'In Progress': { bg: '#dbeafe', text: '#1d4ed8' } }[status] || { bg: '#f3f4f6', text: '#374151' });
 
 const IncidentMap = () => {
   const navigate = useNavigate();
@@ -2971,29 +3255,19 @@ const IncidentMap = () => {
   useEffect(() => {
     const fetchIncidents = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/Map/GetReportsMapData`, {
-          headers: getAuthHeaders(),
-        });
+        const response = await fetch(`${API_BASE_URL}/Map/GetReportsMapData`, { headers: getAuthHeaders() });
         const data = await response.json();
-        const formattedData = data.map(item => ({
+        setApiIncidents(data.map(item => ({
           id:          item.id.toString(),
           type:        item.category,
           status:      item.status,
           latLng:      [item.latitude, item.longitude],
-          time:        new Date(item.date).toLocaleString('en-GB', {
-                         hour: '2-digit', minute: '2-digit',
-                         day: '2-digit', month: '2-digit',
-                       }),
-          // ✅ location من الـ API مباشرة
+          time:        new Date(item.date).toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' }),
           location:    item.location || `${item.latitude?.toFixed(4)}, ${item.longitude?.toFixed(4)}`,
-          // ✅ title و description من الـ API
           title:       item.title || item.category,
           description: item.description || '',
-        }));
-        setApiIncidents(formattedData);
-      } catch (err) {
-        console.log('Error fetching API:', err);
-      }
+        })));
+      } catch (err) { console.log('Error fetching API:', err); }
     };
     fetchIncidents();
   }, []);
@@ -3001,44 +3275,33 @@ const IncidentMap = () => {
   const handleSearch = (query) => {
     setSearchQuery(query);
     if (!query.trim()) return;
-    const found = apiIncidents.find(inc =>
-      inc.id.toLowerCase().includes(query.toLowerCase())
-    );
+    const found = apiIncidents.find(inc => inc.id.toLowerCase().includes(query.toLowerCase()));
     if (found) handleSelectIncident(found);
   };
 
   const handleSelectIncident = (inc) => {
     setCardVisible(false);
-    setTimeout(() => {
-      setLocalSelected(inc);
-      selectIncident(inc);
-      setCardVisible(true);
-    }, localSelected ? 150 : 0);
+    setTimeout(() => { setLocalSelected(inc); selectIncident(inc); setCardVisible(true); }, localSelected ? 150 : 0);
   };
 
   const handleCloseCard = () => {
     setCardVisible(false);
-    setTimeout(() => {
-      setLocalSelected(null);
-      selectIncident(null);
-    }, 300);
+    setTimeout(() => { setLocalSelected(null); selectIncident(null); }, 300);
   };
 
-  const handleViewFullReport = () => {
-    if (localSelected) navigate(`/reports/${localSelected.id}`);
-  };
+  const handleViewFullReport = () => { if (localSelected) navigate(`/reports/${localSelected.id}`); };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden">
+    <div className="relative w-full h-[calc(100vh-56px)] md:h-screen overflow-hidden">
 
-      {/* Search Box */}
-      <div className="absolute top-4 left-4 w-full max-w-sm z-[1000] pointer-events-auto">
-        <div className="flex w-full h-12 items-stretch rounded-xl shadow-lg">
-          <div className="flex bg-white items-center justify-center pl-4 rounded-l-xl border border-r-0 border-gray-200">
-            <span className="material-symbols-outlined text-gray-400">search</span>
+      {/* Search Box — smaller on mobile */}
+      <div className="absolute top-3 left-3 right-16 md:right-auto md:top-4 md:left-4 md:w-80 z-[1000]">
+        <div className="flex w-full h-11 items-stretch rounded-xl shadow-lg">
+          <div className="flex bg-white items-center justify-center pl-3 rounded-l-xl border border-r-0 border-gray-200">
+            <span className="material-symbols-outlined text-gray-400 text-lg">search</span>
           </div>
           <input
-            className="flex-1 rounded-r-xl border border-l-0 border-gray-200 bg-white h-full px-4 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#022F72]"
+            className="flex-1 rounded-r-xl border border-l-0 border-gray-200 bg-white h-full px-3 text-gray-900 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#022F72]"
             placeholder="Search by incident ID..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
@@ -3046,151 +3309,88 @@ const IncidentMap = () => {
         </div>
       </div>
 
-      {/* Heatmap Toggle */}
-      <div className="absolute top-4 right-4 z-[1000] pointer-events-auto">
-        <div className="bg-white rounded-xl shadow-lg flex items-center px-3 py-2 gap-2 border border-gray-200">
-          <span className="material-symbols-outlined text-orange-500 text-xl">local_fire_department</span>
+      {/* Heatmap Toggle — compact on mobile */}
+      <div className="absolute top-3 right-3 md:top-4 md:right-4 z-[1000]">
+        <div className="bg-white rounded-xl shadow-lg flex items-center px-2 md:px-3 py-2 gap-1 md:gap-2 border border-gray-200">
+          <span className="material-symbols-outlined text-orange-500 text-lg md:text-xl">local_fire_department</span>
           <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              className="sr-only peer"
-              checked={isHeatmapEnabled}
-              onChange={() => setIsHeatmapEnabled(v => !v)}
-            />
-            <div className="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-[#022F72] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+            <input type="checkbox" className="sr-only peer" checked={isHeatmapEnabled} onChange={() => setIsHeatmapEnabled(v => !v)} />
+            <div className="w-9 h-5 bg-gray-200 rounded-full peer peer-checked:bg-[#022F72] after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-4"></div>
           </label>
-          <span className="text-sm font-medium text-gray-700">Heatmap</span>
+          <span className="text-xs md:text-sm font-medium text-gray-700 hidden sm:block">Heatmap</span>
         </div>
       </div>
 
       {/* Map */}
-      <MapContainer
-        center={[30.0444, 31.2357]}
-        zoom={12}
-        style={{ height: '100%', width: '100%' }}
-        zoomControl={true}
-      >
+      <MapContainer center={[30.0444, 31.2357]} zoom={12} style={{ height: '100%', width: '100%' }} zoomControl={true}>
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
         <FlyToIncident incident={localSelected} />
-
-        {isHeatmapEnabled && (
-          <HeatmapLayer incidents={apiIncidents} getMarkerColor={getMarkerColor} />
-        )}
-
+        {isHeatmapEnabled && <HeatmapLayer incidents={apiIncidents} getMarkerColor={getMarkerColor} />}
         {apiIncidents.map(inc => {
           const isSelected = localSelected?.id === inc.id;
           return (
-            <CircleMarker
-              key={inc.id}
-              center={inc.latLng}
+            <CircleMarker key={inc.id} center={inc.latLng}
               radius={isSelected ? 13 : 9}
-              pathOptions={{
-                fillColor:   getMarkerColor(inc.type),
-                fillOpacity: 0.9,
-                color:       isSelected ? '#022F72' : 'white',
-                weight:      isSelected ? 3 : 2,
-              }}
+              pathOptions={{ fillColor: getMarkerColor(inc.type), fillOpacity: 0.9, color: isSelected ? '#022F72' : 'white', weight: isSelected ? 3 : 2 }}
               eventHandlers={{ click: () => handleSelectIncident(inc) }}
             >
-              <Popup>
-                <strong>{inc.title}</strong><br />
-                {inc.description}<br />
-                <small>ID: {inc.id}</small>
-              </Popup>
+              <Popup><strong>{inc.title}</strong><br />{inc.description}<br /><small>ID: {inc.id}</small></Popup>
             </CircleMarker>
           );
         })}
       </MapContainer>
 
-      {/* ✅ الكارد — بيطلع من تحت لما تضغط على نقطة */}
+      {/* Bottom Card — responsive height & layout */}
       {localSelected && (
         <div
           className="absolute bottom-0 left-0 right-0 z-[1000] pointer-events-auto transition-transform duration-300 ease-out"
           style={{ transform: cardVisible ? 'translateY(0)' : 'translateY(100%)' }}
         >
-          <div
-            className="bg-white shadow-2xl border-t border-gray-100 px-6 py-5"
-            style={{ borderRadius: '20px 20px 0 0' }}
-          >
-            {/* Handle bar */}
-            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-4" />
-
-            {/* Close */}
-            <button
-              onClick={handleCloseCard}
-              className="absolute top-5 right-5 p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors"
-            >
+          <div className="bg-white shadow-2xl border-t border-gray-100 px-4 md:px-6 py-4 md:py-5" style={{ borderRadius: '20px 20px 0 0' }}>
+            <div className="w-10 h-1 bg-gray-200 rounded-full mx-auto mb-3" />
+            <button onClick={handleCloseCard} className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-700 transition-colors">
               <span className="material-symbols-outlined text-xl">close</span>
             </button>
 
-            <div className="flex items-start gap-4">
-              {/* أيقونة */}
-              <div
-                className="flex items-center justify-center size-12 rounded-xl flex-shrink-0 mt-1"
-                style={{ backgroundColor: getMarkerColor(localSelected.type) + '20' }}
-              >
-                <span
-                  className="material-symbols-outlined text-2xl"
-                  style={{ color: getMarkerColor(localSelected.type) }}
-                >
-                  {getTypeIcon(localSelected.type)}
-                </span>
+            {/* Mobile: stacked layout / Desktop: side-by-side */}
+            <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4">
+              {/* Icon */}
+              <div className="flex items-center gap-3 sm:block">
+                <div className="flex items-center justify-center size-10 md:size-12 rounded-xl flex-shrink-0" style={{ backgroundColor: getMarkerColor(localSelected.type) + '20' }}>
+                  <span className="material-symbols-outlined text-xl md:text-2xl" style={{ color: getMarkerColor(localSelected.type) }}>{getTypeIcon(localSelected.type)}</span>
+                </div>
+                {/* Title — shown inline with icon on mobile */}
+                <div className="sm:hidden">
+                  <h2 className="text-sm font-bold text-gray-900">{localSelected.title}</h2>
+                  <div className="flex gap-1 mt-1 flex-wrap">
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: getMarkerColor(localSelected.type)+'20', color: getMarkerColor(localSelected.type) }}>{t.translateApiValue(localSelected.type)}</span>
+                    <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: getStatusStyle(localSelected.status).bg, color: getStatusStyle(localSelected.status).text }}>{t.translateApiValue(localSelected.status)}</span>
+                  </div>
+                </div>
               </div>
 
-              {/* التفاصيل */}
-              <div className="flex-grow min-w-0 pr-8">
-
-                {/* ✅ Title + type badge + status badge */}
-                <div className="flex items-center gap-2 flex-wrap mb-1">
-                  <h2 className="text-base font-bold text-gray-900">
-                    {localSelected.title}
-                  </h2>
-                  <span
-                    className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                    style={{
-                      backgroundColor: getMarkerColor(localSelected.type) + '20',
-                      color:           getMarkerColor(localSelected.type),
-                    }}
-                  >
-                    {t.translateApiValue(localSelected.type)}
-                  </span>
-                  <span
-                    className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                    style={{
-                      backgroundColor: getStatusStyle(localSelected.status).bg,
-                      color:           getStatusStyle(localSelected.status).text,
-                    }}
-                  >
-                    {t.translateApiValue(localSelected.status)}
-                  </span>
+              {/* Details */}
+              <div className="flex-grow min-w-0">
+                {/* Title + badges — hidden on mobile (shown above) */}
+                <div className="hidden sm:flex items-center gap-2 flex-wrap mb-1">
+                  <h2 className="text-base font-bold text-gray-900">{localSelected.title}</h2>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: getMarkerColor(localSelected.type)+'20', color: getMarkerColor(localSelected.type) }}>{t.translateApiValue(localSelected.type)}</span>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full" style={{ backgroundColor: getStatusStyle(localSelected.status).bg, color: getStatusStyle(localSelected.status).text }}>{t.translateApiValue(localSelected.status)}</span>
                 </div>
 
-                {/* ✅ Description */}
                 {localSelected.description && (
-                  <p className="text-sm text-gray-600 mb-2 leading-snug">
-                    {localSelected.description}
-                  </p>
+                  <p className="text-xs md:text-sm text-gray-600 mb-2 leading-snug line-clamp-2">{localSelected.description}</p>
                 )}
 
-                {/* ✅ Location كنص + وقت */}
-                <div className="flex items-center gap-4 text-xs text-gray-500 flex-wrap">
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">location_on</span>
-                    {localSelected.location}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">calendar_today</span>
-                    {localSelected.time}
-                  </span>
+                <div className="flex flex-wrap items-center gap-3 text-xs text-gray-500">
+                  <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">location_on</span>{localSelected.location}</span>
+                  <span className="flex items-center gap-1"><span className="material-symbols-outlined text-sm">calendar_today</span>{localSelected.time}</span>
                 </div>
               </div>
 
-              {/* زر التقرير */}
-              <div className="flex-shrink-0 self-center">
-                <button
-                  onClick={handleViewFullReport}
-                  className="bg-[#022F72] text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-[#022F72]/90 transition-colors whitespace-nowrap"
-                >
+              {/* Button */}
+              <div className="flex-shrink-0 sm:self-center">
+                <button onClick={handleViewFullReport} className="w-full sm:w-auto bg-[#022F72] text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:bg-[#022F72]/90 transition-colors whitespace-nowrap">
                   View Full Report
                 </button>
               </div>
@@ -3203,3 +3403,5 @@ const IncidentMap = () => {
 };
 
 export default IncidentMap;
+
+

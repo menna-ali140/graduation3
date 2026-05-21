@@ -501,13 +501,565 @@
 
 
 // تربيط  يوسف الجديد
+// import React, { useState, useEffect } from 'react';
+// import { Link, useNavigate } from 'react-router-dom';
+// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+// import { API_BASE_URL, getAuthHeaders } from '../config/api';
+
+// const SIRSDashboard = () => {
+//   // --- States ---
+//   const [stats, setStats] = useState([]);
+//   const [reports, setReports] = useState([]);
+//   const [activities, setActivities] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [isMapExpanded, setIsMapExpanded] = useState(false);
+//   const [showNotifications, setShowNotifications] = useState(false);
+//   const navigate = useNavigate();
+//   const [volumeData, setVolumeData] = useState([]);
+//   const [notifications, setNotifications] = useState([
+//     { id: 1, text: "New High Priority Incident", time: "5 mins ago", icon: "priority_high", color: "text-red-600" },
+//     { id: 2, text: "Incident #1254 Resolved", time: "15 mins ago", icon: "check_circle", color: "text-green-600" },
+//     { id: 3, text: "New Report Submitted", time: "1 hour ago", icon: "flag", color: "text-yellow-600" }
+//   ]);
+
+ 
+   
+
+// // useEffect(() => {
+// //   const fetchData = async () => {
+// //     try {
+// //       setLoading(true);
+
+// //       // 🔐 التوكن
+// //       const token = localStorage.getItem("token");
+
+// //       const headers = {
+// //         "Content-Type": "application/json",
+// //         Authorization: `Bearer ${token}`,
+// //       };
+
+// //       const [
+// //         totalRes,
+// //         pendingRes,
+// //         progressRes,
+// //         solvedRes,
+// //         volumeRes,
+// //         reportsRes,
+// //         activityRes
+// //       ] = await Promise.all([
+// //         fetch("http://207.180.209.101:5000/api/Dashboard/TotalCount", { headers }),
+// //         fetch("http://207.180.209.101:5000/api/Dashboard/PendingCount", { headers }),
+// //         fetch("http://207.180.209.101:5000/api/Dashboard/InProgressCount", { headers }),
+// //         fetch("http://207.180.209.101:5000/api/Dashboard/SolvedCount", { headers }),
+// //         fetch("http://207.180.209.101:5000/api/Dashboard/IncidentVolume", { headers }),
+// //         fetch("http://207.180.209.101:5000/api/Dashboard/LastFiveReports", { headers }),
+// //         fetch("http://207.180.209.101:5000/api/Dashboard/RecentActions", { headers }),
+// //       ]);
+
+// //       const totalData = await totalRes.json();
+// //       const pendingData = await pendingRes.json();
+// //       const progressData = await progressRes.json();
+// //       const solvedData = await solvedRes.json();
+// //       const volumeDataAPI = await volumeRes.json();
+// //       const reportsData = await reportsRes.json();
+// //       const activityData = await activityRes.json();
+
+// //       // ======================
+// //       // 📊 STATS (value حسب الباك)
+// //       // ======================
+// //       setStats([
+// //         {
+// //           label: "Total Reports",
+// //           value: totalData.value || 0,
+// //           trend: "",
+// //           trendClass: "text-green-600",
+// //           border: "border-gray-200",
+// //         },
+// //         {
+// //           label: "Pending",
+// //           value: pendingData.value || 0,
+// //           trend: "",
+// //           trendClass: "text-green-600",
+// //           border: "border-gray-200",
+// //         },
+// //         {
+// //           label: "In Progress",
+// //           value: progressData.value || 0,
+// //           trend: "",
+// //           trendClass: "text-red-600",
+// //           border: "border-gray-200",
+// //         },
+// //         {
+// //           label: "Resolved",
+// //           value: solvedData.value || 0,
+// //           trend: "",
+// //           trendClass: "text-green-600",
+// //           border: "border-gray-200",
+// //         },
+// //         {
+// //           label: "High Priority",
+// //           value: 0,
+// //           trend: "",
+// //           trendClass: "text-green-600",
+// //           border: "border-red-500/50",
+// //         },
+// //       ]);
+
+// //       // ======================
+// //       // 📈 INCIDENT VOLUME
+// //       // ======================
+// //       const volumeArray = Array.isArray(volumeDataAPI)
+// //         ? volumeDataAPI
+// //         : [];
+
+// //       setVolumeData(
+// //         volumeArray.map((item) => ({
+// //           day: item.day,
+// //           count: item.count,
+// //         }))
+// //       );
+
+// //       // ======================
+// //       // 📄 LAST FIVE REPORTS
+// //       // ======================
+// //       const reportsArray = Array.isArray(reportsData)
+// //         ? reportsData
+// //         : [];
+
+// //       setReports(
+// //         reportsArray.map((r) => ({
+// //           id: r.report_ID,
+// //           type: r.category,
+// //           status: r.status,
+// //           time: r.submitDate,
+// //           badge:
+// //             r.status === "Resolved"
+// //               ? "bg-green-100 text-green-800"
+// //               : r.status === "In Progress"
+// //               ? "bg-orange-100 text-orange-800"
+// //               : r.status === "Pending"
+// //               ? "bg-gray-100 text-gray-800"
+// //               : "bg-red-100 text-red-800",
+// //         }))
+// //       );
+
+// //       // ======================
+// //       // 🧾 RECENT ACTIONS
+// //       // ======================
+// //       const activityArray = Array.isArray(activityData)
+// //         ? activityData
+// //         : [];
+
+// //       setActivities(
+// //         activityArray.map((a) => ({
+// //           id: a.title,
+// //           type: "info",
+// //           bg: "bg-blue-100",
+// //           iconCol: "text-blue-600",
+// //           text: a.title,
+// //           time: new Date(a.timestamp).toLocaleString(),
+// //         }))
+// //       );
+
+// //     } catch (err) {
+// //       console.error("Dashboard Error:", err);
+// //     } finally {
+// //       setLoading(false);
+// //     }
+// //   };
+
+// //   fetchData();
+// // }, []);
+// useEffect(() => {
+//   const fetchData = async () => {
+//     try {
+//       setLoading(true);
+
+//       const headers = getAuthHeaders();
+
+//       const [
+//         totalRes,
+//         pendingRes,
+//         progressRes,
+//         solvedRes,
+//         volumeRes,
+//         reportsRes,
+//         activityRes
+//       ] = await Promise.all([
+//         fetch(`${API_BASE_URL}/Dashboard/TotalCount`, { headers: getAuthHeaders() }),
+//         fetch(`${API_BASE_URL}/Dashboard/PendingCount`, { headers: getAuthHeaders() }),
+//         fetch(`${API_BASE_URL}/Dashboard/InProgressCount`, { headers: getAuthHeaders() }),
+//         fetch(`${API_BASE_URL}/Dashboard/SolvedCount`, { headers: getAuthHeaders() }),
+//         fetch(`${API_BASE_URL}/Dashboard/IncidentVolume`, { headers: getAuthHeaders() }),
+//         fetch(`${API_BASE_URL}/Dashboard/LastFiveReports`, { headers: getAuthHeaders() }),
+//         fetch(`${API_BASE_URL}/Dashboard/RecentActions`, { headers: getAuthHeaders() }),
+//       ]);
+
+//       const totalData = await totalRes.json();
+//       const pendingData = await pendingRes.json();
+//       const progressData = await progressRes.json();
+//       const solvedData = await solvedRes.json();
+//       const volumeDataAPI = await volumeRes.json();
+//       const reportsData = await reportsRes.json();
+//       const activityData = await activityRes.json();
+
+//       // ======================
+//       // 📊 STATS
+//       // ======================
+//       setStats([
+//         { label: "Total Reports", value: totalData.value || 0, border: "border-gray-200" },
+//         { label: "Pending", value: pendingData.value || 0, border: "border-gray-200" },
+//         { label: "In Progress", value: progressData.value || 0, border: "border-gray-200" },
+//         { label: "Resolved", value: solvedData.value || 0, border: "border-gray-200" },
+//         { label: "High Priority", value: 0, border: "border-red-500/50" },
+//       ]);
+
+//       // ======================
+//       // 📈 INCIDENT VOLUME (FIXED)
+//       // ======================
+//       const volumeArray = Array.isArray(volumeDataAPI) ? volumeDataAPI : [];
+//       const last7Days = volumeArray.slice(-7);
+
+// setVolumeData(
+//   last7Days.map((item) => ({
+//     day: item.day,
+//     count: item.total,
+//   }))
+// );
+
+//       // setVolumeData(
+//       //   volumeArray.map((item) => ({
+//       //     day: item.day,
+//       //     pendingCount: item.pendingCount,
+//       //     inProgressCount: item.inProgressCount,
+//       //     solvedCount: item.solvedCount,
+//       //   }))
+//       // );
+
+//       // ======================
+//       // 📄 REPORTS
+//       // ======================
+//       const reportsArray = Array.isArray(reportsData) ? reportsData : [];
+
+//       setReports(
+//         reportsArray.map((r) => ({
+//           id: r.report_ID,
+//           type: r.category,
+//           status: r.status,
+//           time: r.submitDate,
+//           badge:
+//             r.status === "Resolved"
+//               ? "bg-green-100 text-green-800"
+//               : r.status === "In Progress"
+//               ? "bg-orange-100 text-orange-800"
+//               : "bg-gray-100 text-gray-800",
+//         }))
+//       );
+
+//       // ======================
+//       // 🧾 RECENT ACTIVITY (FIXED)
+//       // ======================
+//       const activityArray = Array.isArray(activityData) ? activityData : [];
+
+//       setActivities(
+//         activityArray.map((a) => ({
+//           id: a.reportId,
+//           type:
+//             a.status === "Resolved"
+//               ? "check_circle"
+//               : a.status === "In Progress"
+//               ? "sync"
+//               : "schedule",
+
+//           bg:
+//             a.status === "Resolved"
+//               ? "bg-green-100"
+//               : a.status === "In Progress"
+//               ? "bg-orange-100"
+//               : "bg-gray-100",
+
+//           iconCol:
+//             a.status === "Resolved"
+//               ? "text-green-600"
+//               : a.status === "In Progress"
+//               ? "text-orange-600"
+//               : "text-gray-600",
+
+//           text: `${a.category} - ${a.status}`,
+//           time: new Date(a.time).toLocaleString(),
+//         }))
+//       );
+
+//     } catch (err) {
+//       console.error("Dashboard Error:", err);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   fetchData();
+// }, []);
+
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center">
+//         <p className="text-slate-500">Loading dashboard...</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="w-full p-8 overflow-y-auto">
+//       <div className="max-w-7xl mx-auto">
+//         {/* Header */}
+//         <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+//               <p className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Dashboard</p>
+//               <div className="flex items-center gap-4 relative">
+//                 <button 
+//                   onClick={() => setShowNotifications(!showNotifications)}
+//                   className="relative rounded-full p-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+//                 >
+//                   <span className="material-symbols-outlined text-gray-600 dark:text-gray-300">notifications</span>
+//                   <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+//                 </button>
+
+//                 {/* Notifications Dropdown */}
+//                 {showNotifications && (
+//                   <div className="absolute right-0 top-12 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-40">
+//                     <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+//                       <h3 className="text-gray-900 dark:text-white font-bold">Notifications</h3>
+//                     </div>
+//                     <div className="max-h-96 overflow-y-auto">
+//                       {notifications.length > 0 ? (
+//                         notifications.map((notif) => (
+//                           <div key={notif.id} className="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
+//                             <div className="flex items-start gap-3">
+//                               <span className={`material-symbols-outlined ${notif.color}`}>{notif.icon}</span>
+//                               <div className="flex-1">
+//                                 <p className="text-gray-900 dark:text-gray-100 text-sm font-medium">{notif.text}</p>
+//                                 <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">{notif.time}</p>
+//                               </div>
+//                             </div>
+//                           </div>
+//                         ))
+//                       ) : (
+//                         <div className="p-4 text-center text-gray-500">No notifications</div>
+//                       )}
+//                     </div>
+//                     <div className="p-3 border-t border-gray-200 dark:border-gray-700 text-center">
+//                       <Link to="/notifications" className="text-primary text-sm font-medium hover:underline">View All</Link>
+//                     </div>
+//                   </div>
+//                 )}
+//               </div>
+//             </div>
+
+//             {/* Stats Cards */}
+//             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+//               {stats.map((stat, i) => (
+//                 <div key={i} className={`flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-900/50 border ${stat.border} stat-card`}>
+//                   <p className="text-gray-600 dark:text-gray-400 text-base font-medium leading-normal">{stat.label}</p>
+//                   <p className="text-gray-900 dark:text-white tracking-light text-3xl font-bold leading-tight">{stat.value}</p>
+//                   <p className={`${stat.trendClass} text-sm font-medium leading-normal`}>{stat.trend}</p>
+//                 </div>
+//               ))}
+//             </div>
+
+//             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+//               {/* Left */}
+//               <div className="lg:col-span-2 flex flex-col gap-8">
+//                 {/* Graph */}
+//                 {/* <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+//                   <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight mb-4">Incident Volume (Last 7 Days)</h2>
+//                   <img className="w-full h-64 object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzWZqjUhQ-zWks5xLs1-bh69ZP9FbDHHiqusFoKi2ejkECgqcg9MakNbWiYexs2Q7QWYA-memZ8fuxqT9GkRaBLIwMcvjvOhT8uuZL5sCOorD1EHOLqYKX9e5GIAbFJZ5QRxPYCdVP4qzBUpM_V1lGCUgLAGjVkptAkLZO3DN6iAJEChoAvku6xNzPSNBzzKKbhdNGyC4_3iKyvXEK-0MZsMIWL9DPiWmp5-IeXrQ8OAnML0N4PBHzPourtHHXEwBffHiWBWcTdye7" alt="Trend Graph" />
+//                 </div> */}
+//                 <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
+//               <h2 className="text-gray-900 dark:text-white text-lg font-bold mb-6">Incident Volume (Last 7 Days)</h2>
+//               <div className="h-64 w-full">
+//                 <ResponsiveContainer width="100%" height="100%">
+//                   <LineChart data={volumeData}>
+//                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+//                     <XAxis 
+//                       dataKey="day" 
+//                       axisLine={false} 
+//                       tickLine={false} 
+//                       tick={{fill: '#64748b', fontSize: 12}} 
+//                     />
+//                     <YAxis 
+//                       axisLine={false} 
+//                       tickLine={false} 
+//                       tick={{fill: '#64748b', fontSize: 12}} 
+//                     />
+//                     <Tooltip 
+//                       contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
+//                     />
+//                     <Line 
+//                       type="monotone" 
+//                       dataKey="count" 
+//                       stroke="#0284c7" 
+//                       strokeWidth={3} 
+//                       dot={{ r: 4, fill: '#0284c7' }}
+//                       activeDot={{ r: 6 }}
+//                     />
+//                   </LineChart>
+//                 </ResponsiveContainer>
+//               </div>
+//             </div>
+
+
+
+
+//                 {/* Table */}
+//                 <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+//                   <div className="flex justify-between items-center mb-4">
+//                     <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight">Latest Reports</h2>
+//                     <Link to="/reports" className="text-sm font-medium text-primary hover:underline">View All</Link>
+//                   </div>
+//                   <div className="overflow-x-auto">
+//                     <table className="w-full text-left">
+//                       <thead>
+//                         <tr className="border-b border-gray-200 dark:border-gray-800">
+//                           <th className="px-4 py-3 text-gray-600 dark:text-gray-400 text-sm font-medium">Incident ID</th>
+//                           <th className="px-4 py-3 text-gray-600 dark:text-gray-400 text-sm font-medium">Type</th>
+//                           <th className="px-4 py-3 text-gray-600 dark:text-gray-400 text-sm font-medium">Status</th>
+//                           <th className="px-4 py-3 text-gray-600 dark:text-gray-400 text-sm font-medium">Reported Time</th>
+//                         </tr>
+//                       </thead>
+//                       <tbody>
+//                         {reports.map((r, idx) => (
+//                           <tr key={idx} className="border-b border-gray-200 dark:border-gray-800">
+//                             <td className="px-4 py-3 text-gray-800 dark:text-gray-200 text-sm">{r.id}</td>
+//                             <td className="px-4 py-3 text-gray-800 dark:text-gray-200 text-sm">{r.type}</td>
+//                             <td className="px-4 py-3"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${r.badge}`}>{r.status}</span></td>
+//                             <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-sm">{r.time}</td>
+//                           </tr>
+//                         ))}
+//                       </tbody>
+//                     </table>
+//                   </div>
+//                 </div>
+//               </div>
+
+//               {/* Right */}
+//               <div className="lg:col-span-1 flex flex-col gap-8">
+//                 {/* Hotspots */}
+//                 {/* <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+//                   <div className="flex justify-between items-center mb-4">
+//                     <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight">Incident Hotspots</h2>
+//                     <button onClick={() => setIsMapExpanded(!isMapExpanded)} className="text-sm font-medium text-primary hover:underline">
+//                       {isMapExpanded ? "Collapse" : "Full Map"}
+//                     </button>
+//                   </div>
+//                   <div className="aspect-square rounded-lg overflow-hidden">
+//                     <img 
+//                       className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" 
+//                       src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r" 
+//                       alt="Heatmap" 
+//                       onClick={() => setIsMapExpanded(!isMapExpanded)}
+//                     />
+//                   </div>
+//                 </div> */}
+
+//                 {/* Hotspots */}
+// {/* <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+//   <div className="flex justify-between items-center mb-4">
+//     <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight">Incident Hotspots</h2>
+    
+    
+//     <button 
+//       onClick={() => navigate('/map')} 
+//       className="text-sm font-medium text-primary hover:underline"
+//     >
+//       Full Map
+//     </button>
+//   </div>
+  
+//   <div className="aspect-square rounded-lg overflow-hidden relative group">
+//     <img 
+//       className="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105" 
+//       src="https://api.placeholder.com/400x400?text=Map+Preview" 
+//       alt="Heatmap" 
+//       onClick={() => navigate('/map')} // تروح للماب لما تضغطي على الصورة كمان
+//     />
+//     <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors pointer-events-none" />
+//   </div>
+// </div> */}
+// {/* Hotspots Section - الكود الأصلي بتاعك بالظبط */}
+// <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+//   <div className="flex justify-between items-center mb-4">
+//     <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight">Incident Hotspots</h2>
+//     <button 
+//       onClick={() => navigate('/map')} 
+//       className="text-sm font-medium text-primary hover:underline"
+//     >
+//       Full Map
+//     </button>
+//   </div>
+//   <div className="aspect-square rounded-lg overflow-hidden">
+//     <img 
+//       className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" 
+//       // ده اللينك اللي كان في كودك الأصلي
+//       src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r" 
+//       alt="Heatmap" 
+//       onClick={() => navigate('/map')}
+//     />
+//   </div>
+// </div>
+
+//                 {/* Fullscreen Map Overlay */}
+//                 {isMapExpanded && (
+//                   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+//                     <div className="relative w-full h-full">
+//                       <button 
+//                         onClick={() => setIsMapExpanded(false)}
+//                         className="absolute top-4 right-4 z-50 bg-white dark:bg-gray-800 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+//                       >
+//                         <span className="material-symbols-outlined text-gray-900 dark:text-white">close</span>
+//                       </button>
+//                       <img 
+//                         className="w-full h-full object-cover" 
+//                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r" 
+//                         alt="Full Map" 
+//                       />
+//                     </div>
+//                   </div>
+//                 )}
+
+//                 {/* Activities */}
+//                 <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+//                   <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight mb-4">Recent Activity</h2>
+//                   <div className="flex flex-col gap-4">
+//                     {activities.map((act, i) => (
+//                       <div key={i} className="flex items-start gap-3">
+//                         <div className={`p-2 ${act.bg} dark:${act.bg}/50 rounded-full`}>
+//                           <span className={`material-symbols-outlined ${act.iconCol} text-base`}>{act.type}</span>
+//                         </div>
+//                         <div>
+//                           <p className="text-sm text-gray-800 dark:text-gray-200">{act.text} <span className="font-bold">{act.id}</span></p>
+//                           <p className="text-xs text-gray-500 dark:text-gray-400">{act.time}</p>
+//                         </div>
+//                       </div>
+//                     ))}
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default SIRSDashboard;
+
+
+
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { API_BASE_URL, getAuthHeaders } from '../config/api';
 
 const SIRSDashboard = () => {
-  // --- States ---
   const [stats, setStats] = useState([]);
   const [reports, setReports] = useState([]);
   const [activities, setActivities] = useState([]);
@@ -522,284 +1074,61 @@ const SIRSDashboard = () => {
     { id: 3, text: "New Report Submitted", time: "1 hour ago", icon: "flag", color: "text-yellow-600" }
   ]);
 
- 
-   
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [totalRes, pendingRes, progressRes, solvedRes, volumeRes, reportsRes, activityRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/Dashboard/TotalCount`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/Dashboard/PendingCount`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/Dashboard/InProgressCount`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/Dashboard/SolvedCount`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/Dashboard/IncidentVolume`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/Dashboard/LastFiveReports`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/Dashboard/RecentActions`, { headers: getAuthHeaders() }),
+        ]);
+        const totalData = await totalRes.json();
+        const pendingData = await pendingRes.json();
+        const progressData = await progressRes.json();
+        const solvedData = await solvedRes.json();
+        const volumeDataAPI = await volumeRes.json();
+        const reportsData = await reportsRes.json();
+        const activityData = await activityRes.json();
 
-// useEffect(() => {
-//   const fetchData = async () => {
-//     try {
-//       setLoading(true);
+        setStats([
+          { label: "Total Reports", value: totalData.value || 0, border: "border-gray-200" },
+          { label: "Pending", value: pendingData.value || 0, border: "border-gray-200" },
+          { label: "In Progress", value: progressData.value || 0, border: "border-gray-200" },
+          { label: "Resolved", value: solvedData.value || 0, border: "border-gray-200" },
+          { label: "High Priority", value: 0, border: "border-red-500/50" },
+        ]);
 
-//       // 🔐 التوكن
-//       const token = localStorage.getItem("token");
+        const volumeArray = Array.isArray(volumeDataAPI) ? volumeDataAPI : [];
+        setVolumeData(volumeArray.slice(-7).map((item) => ({ day: item.day, count: item.total })));
 
-//       const headers = {
-//         "Content-Type": "application/json",
-//         Authorization: `Bearer ${token}`,
-//       };
+        const reportsArray = Array.isArray(reportsData) ? reportsData : [];
+        setReports(reportsArray.map((r) => ({
+          id: r.report_ID, type: r.category, status: r.status, time: r.submitDate,
+          badge: r.status === "Resolved" ? "bg-green-100 text-green-800" : r.status === "In Progress" ? "bg-orange-100 text-orange-800" : "bg-gray-100 text-gray-800",
+        })));
 
-//       const [
-//         totalRes,
-//         pendingRes,
-//         progressRes,
-//         solvedRes,
-//         volumeRes,
-//         reportsRes,
-//         activityRes
-//       ] = await Promise.all([
-//         fetch("http://207.180.209.101:5000/api/Dashboard/TotalCount", { headers }),
-//         fetch("http://207.180.209.101:5000/api/Dashboard/PendingCount", { headers }),
-//         fetch("http://207.180.209.101:5000/api/Dashboard/InProgressCount", { headers }),
-//         fetch("http://207.180.209.101:5000/api/Dashboard/SolvedCount", { headers }),
-//         fetch("http://207.180.209.101:5000/api/Dashboard/IncidentVolume", { headers }),
-//         fetch("http://207.180.209.101:5000/api/Dashboard/LastFiveReports", { headers }),
-//         fetch("http://207.180.209.101:5000/api/Dashboard/RecentActions", { headers }),
-//       ]);
-
-//       const totalData = await totalRes.json();
-//       const pendingData = await pendingRes.json();
-//       const progressData = await progressRes.json();
-//       const solvedData = await solvedRes.json();
-//       const volumeDataAPI = await volumeRes.json();
-//       const reportsData = await reportsRes.json();
-//       const activityData = await activityRes.json();
-
-//       // ======================
-//       // 📊 STATS (value حسب الباك)
-//       // ======================
-//       setStats([
-//         {
-//           label: "Total Reports",
-//           value: totalData.value || 0,
-//           trend: "",
-//           trendClass: "text-green-600",
-//           border: "border-gray-200",
-//         },
-//         {
-//           label: "Pending",
-//           value: pendingData.value || 0,
-//           trend: "",
-//           trendClass: "text-green-600",
-//           border: "border-gray-200",
-//         },
-//         {
-//           label: "In Progress",
-//           value: progressData.value || 0,
-//           trend: "",
-//           trendClass: "text-red-600",
-//           border: "border-gray-200",
-//         },
-//         {
-//           label: "Resolved",
-//           value: solvedData.value || 0,
-//           trend: "",
-//           trendClass: "text-green-600",
-//           border: "border-gray-200",
-//         },
-//         {
-//           label: "High Priority",
-//           value: 0,
-//           trend: "",
-//           trendClass: "text-green-600",
-//           border: "border-red-500/50",
-//         },
-//       ]);
-
-//       // ======================
-//       // 📈 INCIDENT VOLUME
-//       // ======================
-//       const volumeArray = Array.isArray(volumeDataAPI)
-//         ? volumeDataAPI
-//         : [];
-
-//       setVolumeData(
-//         volumeArray.map((item) => ({
-//           day: item.day,
-//           count: item.count,
-//         }))
-//       );
-
-//       // ======================
-//       // 📄 LAST FIVE REPORTS
-//       // ======================
-//       const reportsArray = Array.isArray(reportsData)
-//         ? reportsData
-//         : [];
-
-//       setReports(
-//         reportsArray.map((r) => ({
-//           id: r.report_ID,
-//           type: r.category,
-//           status: r.status,
-//           time: r.submitDate,
-//           badge:
-//             r.status === "Resolved"
-//               ? "bg-green-100 text-green-800"
-//               : r.status === "In Progress"
-//               ? "bg-orange-100 text-orange-800"
-//               : r.status === "Pending"
-//               ? "bg-gray-100 text-gray-800"
-//               : "bg-red-100 text-red-800",
-//         }))
-//       );
-
-//       // ======================
-//       // 🧾 RECENT ACTIONS
-//       // ======================
-//       const activityArray = Array.isArray(activityData)
-//         ? activityData
-//         : [];
-
-//       setActivities(
-//         activityArray.map((a) => ({
-//           id: a.title,
-//           type: "info",
-//           bg: "bg-blue-100",
-//           iconCol: "text-blue-600",
-//           text: a.title,
-//           time: new Date(a.timestamp).toLocaleString(),
-//         }))
-//       );
-
-//     } catch (err) {
-//       console.error("Dashboard Error:", err);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   fetchData();
-// }, []);
-useEffect(() => {
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-
-      const headers = getAuthHeaders();
-
-      const [
-        totalRes,
-        pendingRes,
-        progressRes,
-        solvedRes,
-        volumeRes,
-        reportsRes,
-        activityRes
-      ] = await Promise.all([
-        fetch(`${API_BASE_URL}/Dashboard/TotalCount`, { headers: getAuthHeaders() }),
-        fetch(`${API_BASE_URL}/Dashboard/PendingCount`, { headers: getAuthHeaders() }),
-        fetch(`${API_BASE_URL}/Dashboard/InProgressCount`, { headers: getAuthHeaders() }),
-        fetch(`${API_BASE_URL}/Dashboard/SolvedCount`, { headers: getAuthHeaders() }),
-        fetch(`${API_BASE_URL}/Dashboard/IncidentVolume`, { headers: getAuthHeaders() }),
-        fetch(`${API_BASE_URL}/Dashboard/LastFiveReports`, { headers: getAuthHeaders() }),
-        fetch(`${API_BASE_URL}/Dashboard/RecentActions`, { headers: getAuthHeaders() }),
-      ]);
-
-      const totalData = await totalRes.json();
-      const pendingData = await pendingRes.json();
-      const progressData = await progressRes.json();
-      const solvedData = await solvedRes.json();
-      const volumeDataAPI = await volumeRes.json();
-      const reportsData = await reportsRes.json();
-      const activityData = await activityRes.json();
-
-      // ======================
-      // 📊 STATS
-      // ======================
-      setStats([
-        { label: "Total Reports", value: totalData.value || 0, border: "border-gray-200" },
-        { label: "Pending", value: pendingData.value || 0, border: "border-gray-200" },
-        { label: "In Progress", value: progressData.value || 0, border: "border-gray-200" },
-        { label: "Resolved", value: solvedData.value || 0, border: "border-gray-200" },
-        { label: "High Priority", value: 0, border: "border-red-500/50" },
-      ]);
-
-      // ======================
-      // 📈 INCIDENT VOLUME (FIXED)
-      // ======================
-      const volumeArray = Array.isArray(volumeDataAPI) ? volumeDataAPI : [];
-      const last7Days = volumeArray.slice(-7);
-
-setVolumeData(
-  last7Days.map((item) => ({
-    day: item.day,
-    count: item.total,
-  }))
-);
-
-      // setVolumeData(
-      //   volumeArray.map((item) => ({
-      //     day: item.day,
-      //     pendingCount: item.pendingCount,
-      //     inProgressCount: item.inProgressCount,
-      //     solvedCount: item.solvedCount,
-      //   }))
-      // );
-
-      // ======================
-      // 📄 REPORTS
-      // ======================
-      const reportsArray = Array.isArray(reportsData) ? reportsData : [];
-
-      setReports(
-        reportsArray.map((r) => ({
-          id: r.report_ID,
-          type: r.category,
-          status: r.status,
-          time: r.submitDate,
-          badge:
-            r.status === "Resolved"
-              ? "bg-green-100 text-green-800"
-              : r.status === "In Progress"
-              ? "bg-orange-100 text-orange-800"
-              : "bg-gray-100 text-gray-800",
-        }))
-      );
-
-      // ======================
-      // 🧾 RECENT ACTIVITY (FIXED)
-      // ======================
-      const activityArray = Array.isArray(activityData) ? activityData : [];
-
-      setActivities(
-        activityArray.map((a) => ({
+        const activityArray = Array.isArray(activityData) ? activityData : [];
+        setActivities(activityArray.map((a) => ({
           id: a.reportId,
-          type:
-            a.status === "Resolved"
-              ? "check_circle"
-              : a.status === "In Progress"
-              ? "sync"
-              : "schedule",
-
-          bg:
-            a.status === "Resolved"
-              ? "bg-green-100"
-              : a.status === "In Progress"
-              ? "bg-orange-100"
-              : "bg-gray-100",
-
-          iconCol:
-            a.status === "Resolved"
-              ? "text-green-600"
-              : a.status === "In Progress"
-              ? "text-orange-600"
-              : "text-gray-600",
-
+          type: a.status === "Resolved" ? "check_circle" : a.status === "In Progress" ? "sync" : "schedule",
+          bg: a.status === "Resolved" ? "bg-green-100" : a.status === "In Progress" ? "bg-orange-100" : "bg-gray-100",
+          iconCol: a.status === "Resolved" ? "text-green-600" : a.status === "In Progress" ? "text-orange-600" : "text-gray-600",
           text: `${a.category} - ${a.status}`,
           time: new Date(a.time).toLocaleString(),
-        }))
-      );
-
-    } catch (err) {
-      console.error("Dashboard Error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, []);
-
+        })));
+      } catch (err) {
+        console.error("Dashboard Error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
   if (loading) {
     return (
@@ -810,251 +1139,168 @@ setVolumeData(
   }
 
   return (
-    <div className="w-full p-8 overflow-y-auto">
+    <div className="w-full p-4 md:p-8 overflow-y-auto">
       <div className="max-w-7xl mx-auto">
+
         {/* Header */}
         <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-              <p className="text-gray-900 dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Dashboard</p>
-              <div className="flex items-center gap-4 relative">
-                <button 
-                  onClick={() => setShowNotifications(!showNotifications)}
-                  className="relative rounded-full p-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <span className="material-symbols-outlined text-gray-600 dark:text-gray-300">notifications</span>
-                  <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
-                </button>
+          <p className="text-gray-900 dark:text-white text-2xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Dashboard</p>
+          <div className="flex items-center gap-4 relative">
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative rounded-full p-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            >
+              <span className="material-symbols-outlined text-gray-600 dark:text-gray-300">notifications</span>
+              <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+            </button>
 
-                {/* Notifications Dropdown */}
-                {showNotifications && (
-                  <div className="absolute right-0 top-12 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-40">
-                    <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-                      <h3 className="text-gray-900 dark:text-white font-bold">Notifications</h3>
-                    </div>
-                    <div className="max-h-96 overflow-y-auto">
-                      {notifications.length > 0 ? (
-                        notifications.map((notif) => (
-                          <div key={notif.id} className="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
-                            <div className="flex items-start gap-3">
-                              <span className={`material-symbols-outlined ${notif.color}`}>{notif.icon}</span>
-                              <div className="flex-1">
-                                <p className="text-gray-900 dark:text-gray-100 text-sm font-medium">{notif.text}</p>
-                                <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">{notif.time}</p>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="p-4 text-center text-gray-500">No notifications</div>
-                      )}
-                    </div>
-                    <div className="p-3 border-t border-gray-200 dark:border-gray-700 text-center">
-                      <Link to="/notifications" className="text-primary text-sm font-medium hover:underline">View All</Link>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-              {stats.map((stat, i) => (
-                <div key={i} className={`flex flex-col gap-2 rounded-xl p-6 bg-white dark:bg-gray-900/50 border ${stat.border} stat-card`}>
-                  <p className="text-gray-600 dark:text-gray-400 text-base font-medium leading-normal">{stat.label}</p>
-                  <p className="text-gray-900 dark:text-white tracking-light text-3xl font-bold leading-tight">{stat.value}</p>
-                  <p className={`${stat.trendClass} text-sm font-medium leading-normal`}>{stat.trend}</p>
+            {showNotifications && (
+              <div className="absolute right-0 top-12 w-72 md:w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-40">
+                <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-gray-900 dark:text-white font-bold">Notifications</h3>
                 </div>
-              ))}
-            </div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.length > 0 ? notifications.map((notif) => (
+                    <div key={notif.id} className="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
+                      <div className="flex items-start gap-3">
+                        <span className={`material-symbols-outlined ${notif.color}`}>{notif.icon}</span>
+                        <div className="flex-1">
+                          <p className="text-gray-900 dark:text-gray-100 text-sm font-medium">{notif.text}</p>
+                          <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">{notif.time}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )) : (
+                    <div className="p-4 text-center text-gray-500">No notifications</div>
+                  )}
+                </div>
+                <div className="p-3 border-t border-gray-200 dark:border-gray-700 text-center">
+                  <Link to="/notifications" className="text-primary text-sm font-medium hover:underline">View All</Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-              {/* Left */}
-              <div className="lg:col-span-2 flex flex-col gap-8">
-                {/* Graph */}
-                {/* <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
-                  <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight mb-4">Incident Volume (Last 7 Days)</h2>
-                  <img className="w-full h-64 object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzWZqjUhQ-zWks5xLs1-bh69ZP9FbDHHiqusFoKi2ejkECgqcg9MakNbWiYexs2Q7QWYA-memZ8fuxqT9GkRaBLIwMcvjvOhT8uuZL5sCOorD1EHOLqYKX9e5GIAbFJZ5QRxPYCdVP4qzBUpM_V1lGCUgLAGjVkptAkLZO3DN6iAJEChoAvku6xNzPSNBzzKKbhdNGyC4_3iKyvXEK-0MZsMIWL9DPiWmp5-IeXrQ8OAnML0N4PBHzPourtHHXEwBffHiWBWcTdye7" alt="Trend Graph" />
-                </div> */}
-                <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
-              <h2 className="text-gray-900 dark:text-white text-lg font-bold mb-6">Incident Volume (Last 7 Days)</h2>
-              <div className="h-64 w-full">
+        {/* Stats Cards — 2 cols mobile, 3 tablet, 5 desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
+          {stats.map((stat, i) => (
+            <div key={i} className={`flex flex-col gap-2 rounded-xl p-4 md:p-6 bg-white dark:bg-gray-900/50 border ${stat.border}`}>
+              <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base font-medium leading-normal">{stat.label}</p>
+              <p className="text-gray-900 dark:text-white tracking-light text-2xl md:text-3xl font-bold leading-tight">{stat.value}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+
+          {/* Left */}
+          <div className="lg:col-span-2 flex flex-col gap-6 md:gap-8">
+
+            {/* Chart */}
+            <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
+              <h2 className="text-gray-900 dark:text-white text-base md:text-lg font-bold mb-4 md:mb-6">Incident Volume (Last 7 Days)</h2>
+              <div className="h-48 md:h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={volumeData}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis 
-                      dataKey="day" 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{fill: '#64748b', fontSize: 12}} 
-                    />
-                    <YAxis 
-                      axisLine={false} 
-                      tickLine={false} 
-                      tick={{fill: '#64748b', fontSize: 12}} 
-                    />
-                    <Tooltip 
-                      contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="count" 
-                      stroke="#0284c7" 
-                      strokeWidth={3} 
-                      dot={{ r: 4, fill: '#0284c7' }}
-                      activeDot={{ r: 6 }}
-                    />
+                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} />
+                    <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} />
+                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+                    <Line type="monotone" dataKey="count" stroke="#0284c7" strokeWidth={3} dot={{ r: 4, fill: '#0284c7' }} activeDot={{ r: 6 }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
-
-
-
-                {/* Table */}
-                <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight">Latest Reports</h2>
-                    <Link to="/reports" className="text-sm font-medium text-primary hover:underline">View All</Link>
-                  </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                      <thead>
-                        <tr className="border-b border-gray-200 dark:border-gray-800">
-                          <th className="px-4 py-3 text-gray-600 dark:text-gray-400 text-sm font-medium">Incident ID</th>
-                          <th className="px-4 py-3 text-gray-600 dark:text-gray-400 text-sm font-medium">Type</th>
-                          <th className="px-4 py-3 text-gray-600 dark:text-gray-400 text-sm font-medium">Status</th>
-                          <th className="px-4 py-3 text-gray-600 dark:text-gray-400 text-sm font-medium">Reported Time</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {reports.map((r, idx) => (
-                          <tr key={idx} className="border-b border-gray-200 dark:border-gray-800">
-                            <td className="px-4 py-3 text-gray-800 dark:text-gray-200 text-sm">{r.id}</td>
-                            <td className="px-4 py-3 text-gray-800 dark:text-gray-200 text-sm">{r.type}</td>
-                            <td className="px-4 py-3"><span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${r.badge}`}>{r.status}</span></td>
-                            <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-sm">{r.time}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+            {/* Table */}
+            <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-gray-900 dark:text-white text-base md:text-lg font-bold leading-tight">Latest Reports</h2>
+                <Link to="/reports" className="text-sm font-medium text-primary hover:underline">View All</Link>
               </div>
-
-              {/* Right */}
-              <div className="lg:col-span-1 flex flex-col gap-8">
-                {/* Hotspots */}
-                {/* <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight">Incident Hotspots</h2>
-                    <button onClick={() => setIsMapExpanded(!isMapExpanded)} className="text-sm font-medium text-primary hover:underline">
-                      {isMapExpanded ? "Collapse" : "Full Map"}
-                    </button>
-                  </div>
-                  <div className="aspect-square rounded-lg overflow-hidden">
-                    <img 
-                      className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" 
-                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r" 
-                      alt="Heatmap" 
-                      onClick={() => setIsMapExpanded(!isMapExpanded)}
-                    />
-                  </div>
-                </div> */}
-
-                {/* Hotspots */}
-{/* <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
-  <div className="flex justify-between items-center mb-4">
-    <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight">Incident Hotspots</h2>
-    
-    
-    <button 
-      onClick={() => navigate('/map')} 
-      className="text-sm font-medium text-primary hover:underline"
-    >
-      Full Map
-    </button>
-  </div>
-  
-  <div className="aspect-square rounded-lg overflow-hidden relative group">
-    <img 
-      className="w-full h-full object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105" 
-      src="https://api.placeholder.com/400x400?text=Map+Preview" 
-      alt="Heatmap" 
-      onClick={() => navigate('/map')} // تروح للماب لما تضغطي على الصورة كمان
-    />
-    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition-colors pointer-events-none" />
-  </div>
-</div> */}
-{/* Hotspots Section - الكود الأصلي بتاعك بالظبط */}
-<div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
-  <div className="flex justify-between items-center mb-4">
-    <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight">Incident Hotspots</h2>
-    <button 
-      onClick={() => navigate('/map')} 
-      className="text-sm font-medium text-primary hover:underline"
-    >
-      Full Map
-    </button>
-  </div>
-  <div className="aspect-square rounded-lg overflow-hidden">
-    <img 
-      className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity" 
-      // ده اللينك اللي كان في كودك الأصلي
-      src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r" 
-      alt="Heatmap" 
-      onClick={() => navigate('/map')}
-    />
-  </div>
-</div>
-
-                {/* Fullscreen Map Overlay */}
-                {isMapExpanded && (
-                  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-                    <div className="relative w-full h-full">
-                      <button 
-                        onClick={() => setIsMapExpanded(false)}
-                        className="absolute top-4 right-4 z-50 bg-white dark:bg-gray-800 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                      >
-                        <span className="material-symbols-outlined text-gray-900 dark:text-white">close</span>
-                      </button>
-                      <img 
-                        className="w-full h-full object-cover" 
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r" 
-                        alt="Full Map" 
-                      />
-                    </div>
-                  </div>
-                )}
-
-                {/* Activities */}
-                <div className="bg-white dark:bg-gray-900/50 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
-                  <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight mb-4">Recent Activity</h2>
-                  <div className="flex flex-col gap-4">
-                    {activities.map((act, i) => (
-                      <div key={i} className="flex items-start gap-3">
-                        <div className={`p-2 ${act.bg} dark:${act.bg}/50 rounded-full`}>
-                          <span className={`material-symbols-outlined ${act.iconCol} text-base`}>{act.type}</span>
-                        </div>
-                        <div>
-                          <p className="text-sm text-gray-800 dark:text-gray-200">{act.text} <span className="font-bold">{act.id}</span></p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400">{act.time}</p>
-                        </div>
-                      </div>
+              <div className="overflow-x-auto -mx-4 md:mx-0">
+                <table className="w-full text-left min-w-[480px] md:min-w-0 px-4 md:px-0">
+                  <thead>
+                    <tr className="border-b border-gray-200 dark:border-gray-800">
+                      <th className="px-3 md:px-4 py-3 text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Incident ID</th>
+                      <th className="px-3 md:px-4 py-3 text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Type</th>
+                      <th className="px-3 md:px-4 py-3 text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Status</th>
+                      <th className="px-3 md:px-4 py-3 text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Reported Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {reports.map((r, idx) => (
+                      <tr key={idx} className="border-b border-gray-200 dark:border-gray-800">
+                        <td className="px-3 md:px-4 py-3 text-gray-800 dark:text-gray-200 text-xs md:text-sm">{r.id}</td>
+                        <td className="px-3 md:px-4 py-3 text-gray-800 dark:text-gray-200 text-xs md:text-sm">{r.type}</td>
+                        <td className="px-3 md:px-4 py-3">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${r.badge}`}>{r.status}</span>
+                        </td>
+                        <td className="px-3 md:px-4 py-3 text-gray-500 dark:text-gray-400 text-xs md:text-sm">{r.time}</td>
+                      </tr>
                     ))}
-                  </div>
-                </div>
+                  </tbody>
+                </table>
               </div>
             </div>
+          </div>
+
+          {/* Right */}
+          <div className="lg:col-span-1 flex flex-col gap-6 md:gap-8">
+
+            {/* Hotspots */}
+            <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-gray-900 dark:text-white text-base md:text-lg font-bold leading-tight">Incident Hotspots</h2>
+                <button onClick={() => navigate('/map')} className="text-sm font-medium text-primary hover:underline">Full Map</button>
+              </div>
+              <div className="aspect-square rounded-lg overflow-hidden">
+                <img
+                  className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r"
+                  alt="Heatmap"
+                  onClick={() => navigate('/map')}
+                />
+              </div>
+            </div>
+
+            {isMapExpanded && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+                <div className="relative w-full h-full">
+                  <button onClick={() => setIsMapExpanded(false)} className="absolute top-4 right-4 z-50 bg-white dark:bg-gray-800 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                    <span className="material-symbols-outlined text-gray-900 dark:text-white">close</span>
+                  </button>
+                  <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r" alt="Full Map" />
+                </div>
+              </div>
+            )}
+
+            {/* Activities */}
+            <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800">
+              <h2 className="text-gray-900 dark:text-white text-base md:text-lg font-bold leading-tight mb-4">Recent Activity</h2>
+              <div className="flex flex-col gap-4">
+                {activities.map((act, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className={`p-2 ${act.bg} rounded-full flex-shrink-0`}>
+                      <span className={`material-symbols-outlined ${act.iconCol} text-base`}>{act.type}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm text-gray-800 dark:text-gray-200 break-words">{act.text} <span className="font-bold">{act.id}</span></p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{act.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
 export default SIRSDashboard;
-
-
-
-
 
 
 

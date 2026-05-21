@@ -952,36 +952,113 @@ const SettingsPage = () => {
     }
   };
 
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-    setPassMsg({ text: '', ok: true });
-    if (passwords.new !== passwords.confirm) { setPassMsg({ text: t.passNoMatch, ok: false }); return; }
-    if (passwords.new.length < 6)            { setPassMsg({ text: t.passShort,   ok: false }); return; }
+  // const handlePasswordSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setPassMsg({ text: '', ok: true });
+  //   if (passwords.new !== passwords.confirm) { setPassMsg({ text: t.passNoMatch, ok: false }); return; }
+  //   if (passwords.new.length < 6)            { setPassMsg({ text: t.passShort,   ok: false }); return; }
 
-    setPassLoading(true);
-    try {
-      const res = await fetch(`${API_BASE_URL}/Account/ChangePassword`, {
-        method: 'POST',
-        headers: getAuthHeaders(),
-        body: JSON.stringify({ oldPassword: passwords.current, newPassword: passwords.new, confirmPassword: passwords.confirm }),
-      });
-      if (!res.ok) { const err = await res.text(); throw new Error(err || `HTTP ${res.status}`); }
-      setPassMsg({ text: t.passSuccess, ok: true });
-      setPasswords({ current: '', new: '', confirm: '' });
-      setTimeout(() => { setShowPassForm(false); setPassMsg({ text: '', ok: true }); }, 1500);
-    } catch (err) {
-      // fallback محلي لو الـ endpoint لسه مش جاهز
-      if (err.message.includes('404') || err.message.includes('Failed to fetch')) {
-        setPassMsg({ text: t.passSuccess, ok: true });
-        setPasswords({ current: '', new: '', confirm: '' });
-        setTimeout(() => { setShowPassForm(false); setPassMsg({ text: '', ok: true }); }, 1500);
-      } else {
-        setPassMsg({ text: `${t.passFail} ${err.message}`, ok: false });
-      }
-    } finally { setPassLoading(false); }
-  };
+  //   setPassLoading(true);
+  //   try {
+  //     const res = await fetch(`${API_BASE_URL}/Account/ChangePassword`, {
+  //       method: 'POST',
+  //       headers: getAuthHeaders(),
+  //       body: JSON.stringify({ oldPassword: passwords.current, newPassword: passwords.new, confirmPassword: passwords.confirm }),
+  //     });
+  //     if (!res.ok) { const err = await res.text(); throw new Error(err || `HTTP ${res.status}`); }
+  //     setPassMsg({ text: t.passSuccess, ok: true });
+  //     setPasswords({ current: '', new: '', confirm: '' });
+  //     setTimeout(() => { setShowPassForm(false); setPassMsg({ text: '', ok: true }); }, 1500);
+  //   } catch (err) {
+  //     // fallback محلي لو الـ endpoint لسه مش جاهز
+  //     if (err.message.includes('404') || err.message.includes('Failed to fetch')) {
+  //       setPassMsg({ text: t.passSuccess, ok: true });
+  //       setPasswords({ current: '', new: '', confirm: '' });
+  //       setTimeout(() => { setShowPassForm(false); setPassMsg({ text: '', ok: true }); }, 1500);
+  //     } else {
+  //       setPassMsg({ text: `${t.passFail} ${err.message}`, ok: false });
+  //     }
+  //   } finally { setPassLoading(false); }
+  // };
 
   // ── Password field ──────────────────────────────────────────────────────────
+   
+ const handlePasswordSubmit = async (e) => {
+  e.preventDefault();
+
+  setPassMsg({ text: '', ok: true });
+
+  if (passwords.new !== passwords.confirm) {
+    setPassMsg({ text: t.passNoMatch, ok: false });
+    return;
+  }
+
+  if (passwords.new.length < 6) {
+    setPassMsg({ text: t.passShort, ok: false });
+    return;
+  }
+
+  setPassLoading(true);
+
+  try {
+    const res = await fetch(
+      `${API_BASE_URL}/Settings/change-password`,
+      {
+        method: 'PUT',
+        headers: {
+          ...getAuthHeaders(),
+          'Content-Type': 'application/json',
+        },
+
+        body: JSON.stringify({
+          oldPassword: passwords.current,
+          newPassword: passwords.new,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || 'Failed to change password');
+    }
+
+    setPassMsg({
+      text: t.passSuccess,
+      ok: true,
+    });
+
+    setPasswords({
+      current: '',
+      new: '',
+      confirm: '',
+    });
+
+    setTimeout(() => {
+      setShowPassForm(false);
+      setPassMsg({ text: '', ok: true });
+    }, 1500);
+
+  } catch (err) {
+    setPassMsg({
+      text: err.message || t.passFail,
+      ok: false,
+    });
+
+    console.log(err);
+  } finally {
+    setPassLoading(false);
+  }
+}; 
+  
+  
+  
+  
+  
+  
+  
+  
+  
   const PwField = ({ field, placeholder }) => (
     <div className="relative">
       <input

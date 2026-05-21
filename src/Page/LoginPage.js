@@ -421,47 +421,94 @@ const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/LoginAuthority/login`, {
+//     try {
+//       const res = await fetch(`${API_BASE_URL}/LoginAuthority/login`, {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json"
+//         },
+//         // body: JSON.stringify({
+//         //   email,
+//         //   password
+//         // })
+//         body: JSON.stringify({
+//         Email: email,
+//         Password: password
+//         })
+//       });
+
+//       if (!res.ok) {
+//   const errorText = await res.text();
+//   console.log("ERROR FROM SERVER:", errorText);
+//   throw new Error("Login failed");
+// }
+
+//       const data = await res.json();
+
+//       const authToken = data.token || data.access_token || data.accessToken || data.jwt;
+//       if (!authToken) {
+//         throw new Error("Login response did not include a token.");
+//       }
+
+//       localStorage.setItem("token", authToken);
+//       navigate("/dashboard");
+
+//     } catch (err) {
+//       setError("Invalid email or password");
+//       console.error(err);
+//     }
+//   };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await fetch(
+      "http://207.180.209.101:5000/api/LoginAuthority/Login",
+      {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
-        // body: JSON.stringify({
-        //   email,
-        //   password
-        // })
+
         body: JSON.stringify({
-        Email: email,
-        Password: password
+          email,
+          password,
+          deviceToken: ""
         })
-      });
-
-      if (!res.ok) {
-  const errorText = await res.text();
-  console.log("ERROR FROM SERVER:", errorText);
-  throw new Error("Login failed");
-}
-
-      const data = await res.json();
-
-      const authToken = data.token || data.access_token || data.accessToken || data.jwt;
-      if (!authToken) {
-        throw new Error("Login response did not include a token.");
       }
+    );
 
-      localStorage.setItem("token", authToken);
-      navigate("/dashboard");
-
-    } catch (err) {
-      setError("Invalid email or password");
-      console.error(err);
+    if (!res.ok) {
+      const errorText = await res.text();
+      console.log("ERROR FROM SERVER:", errorText);
+      throw new Error("Login failed");
     }
-  };
 
+    const data = await res.json();
+
+    const authToken =
+      data.token ||
+      data.access_token ||
+      data.accessToken ||
+      data.jwt;
+
+    if (!authToken) {
+      throw new Error("Login response did not include a token.");
+    }
+
+    localStorage.setItem("token", authToken);
+
+    navigate("/dashboard");
+
+  } catch (err) {
+    setError("Invalid email or password");
+    console.error(err);
+  }
+};
   return (
     <div className="font-display bg-background-light dark:bg-background-dark min-h-screen">
       <div className="relative flex min-h-screen w-full flex-col items-center justify-center p-4">
@@ -568,3 +615,175 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
+
+
+
+
+
+
+
+
+
+
+// import React, { useState } from "react";
+// import { useNavigate } from "react-router-dom";
+// import { API_BASE_URL } from "../config/api";
+
+// const LoginPage = () => {
+//   const navigate = useNavigate();
+
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [loading, setLoading] = useState(false);
+//   const [error, setError] = useState("");
+
+//   const handleLogin = async (e) => {
+//     e.preventDefault();
+//     setError("");
+
+//     if (!email || !password) {
+//       setError("Please enter your email and password.");
+//       return;
+//     }
+
+//     setLoading(true);
+//     try {
+//       const res = await fetch(`${API_BASE_URL}/Auth/Login`, {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify({ email, password }),
+//       });
+
+//       if (!res.ok) {
+//         const errorData = await res.json().catch(() => ({}));
+//         throw new Error(errorData?.message ?? `Login failed (${res.status})`);
+//       }
+
+//       const data = await res.json();
+
+//       // Store token and any user info returned
+//       const token = data?.token ?? data?.accessToken ?? data?.jwt;
+//       if (!token) throw new Error("No token received from server.");
+
+//       localStorage.setItem("token", token);
+//       if (data?.user) localStorage.setItem("user", JSON.stringify(data.user));
+
+//       navigate("/dashboard");
+//     } catch (err) {
+//       setError(err.message || "Login failed. Please try again.");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div className="font-display bg-[#f6f7f8] dark:bg-[#101922] min-h-screen">
+//       <div className="relative flex min-h-screen w-full flex-col items-center justify-center p-4">
+//         <div className="w-full max-w-md space-y-8">
+
+//           {/* Header */}
+//           <div className="text-center">
+//             <div className="flex items-center justify-center gap-2">
+//               <span className="material-symbols-outlined text-[#022F72] text-4xl">security</span>
+//               <h1 className="text-slate-800 dark:text-slate-200 text-2xl md:text-[32px] font-bold leading-tight">
+//                 Smart Incident Reporting System
+//               </h1>
+//             </div>
+//           </div>
+
+//           {/* Card */}
+//           <div className="bg-white dark:bg-[#141e2e] dark:border dark:border-slate-800 p-8 rounded-xl shadow-sm">
+//             <div className="flex flex-col space-y-6">
+
+//               <div className="text-center">
+//                 <h2 className="text-slate-900 dark:text-slate-100 text-xl font-bold">
+//                   Authorized Personnel Login
+//                 </h2>
+//                 <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">
+//                   Sign in to access your dashboard.
+//                 </p>
+//               </div>
+
+//               {error && (
+//                 <div className="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3">
+//                   <span className="material-symbols-outlined text-red-500 text-base">error</span>
+//                   <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>
+//                 </div>
+//               )}
+
+//               <form className="space-y-4" onSubmit={handleLogin}>
+
+//                 {/* Email */}
+//                 <div>
+//                   <label className="block pb-2 text-slate-800 dark:text-slate-200 text-sm font-medium">
+//                     Email Address
+//                   </label>
+//                   <div className="relative">
+//                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">mail</span>
+//                     <input
+//                       type="email"
+//                       className="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 pl-12 pr-4 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#022F72]"
+//                       placeholder="Enter your email"
+//                       value={email}
+//                       onChange={(e) => setEmail(e.target.value)}
+//                     />
+//                   </div>
+//                 </div>
+
+//                 {/* Password */}
+//                 <div>
+//                   <label className="block pb-2 text-slate-800 dark:text-slate-200 text-sm font-medium">
+//                     Password
+//                   </label>
+//                   <div className="relative">
+//                     <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">lock</span>
+//                     <input
+//                       type={showPassword ? "text" : "password"}
+//                       className="w-full h-12 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 pl-12 pr-12 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-[#022F72]"
+//                       placeholder="Enter your password"
+//                       value={password}
+//                       onChange={(e) => setPassword(e.target.value)}
+//                     />
+//                     <button
+//                       type="button"
+//                       className="absolute right-4 top-1/2 -translate-y-1/2"
+//                       onClick={() => setShowPassword(!showPassword)}
+//                     >
+//                       <span className="material-symbols-outlined text-slate-400">
+//                         {showPassword ? "visibility" : "visibility_off"}
+//                       </span>
+//                     </button>
+//                   </div>
+//                 </div>
+
+//                 <button
+//                   type="submit"
+//                   disabled={loading}
+//                   className="w-full h-12 rounded-lg bg-[#022F72] text-white font-medium hover:bg-[#022F72]/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+//                 >
+//                   {loading ? (
+//                     <>
+//                       <span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
+//                       Signing in...
+//                     </>
+//                   ) : (
+//                     "Secure Login"
+//                   )}
+//                 </button>
+//               </form>
+//             </div>
+//           </div>
+
+//           {/* Footer */}
+//           <div className="text-center text-sm text-slate-500 dark:text-slate-400 space-y-2 break-words mt-6">
+//             <p>Unauthorized access is strictly prohibited. All activities are monitored.</p>
+//             <p>© 2024 Incident Reporting Authority</p>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default LoginPage;
