@@ -412,6 +412,7 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { API_BASE_URL } from '../config/api';
+import {  getJsonHeaders } from '../config/api';
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -462,25 +463,90 @@ const LoginPage = () => {
 //     }
 //   };
 
+
+
+
+
+
+
+
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+
+//   try {
+//     const res = await fetch(
+//       "http://207.180.209.101:5000/api/LoginAuthority/Login",
+//       {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json"
+//         },
+
+//         body: JSON.stringify({
+//           email,
+//           password,
+//           deviceToken: ""
+//         })
+//       }
+//     );
+
+//     if (!res.ok) {
+//       const errorText = await res.text();
+//       console.log("ERROR FROM SERVER:", errorText);
+//       throw new Error("Login failed");
+//     }
+
+//     const data = await res.json();
+
+//     const authToken =
+//       data.token ||
+//       data.access_token ||
+//       data.accessToken ||
+//       data.jwt;
+
+//     if (!authToken) {
+//       throw new Error("Login response did not include a token.");
+//     }
+
+//     localStorage.setItem("token", authToken);
+
+//     navigate("/dashboard");
+
+//   } catch (err) {
+//     setError("Invalid email or password");
+//     console.error(err);
+//   }
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+// 1. تأكدي أولاً من استيراد getJsonHeaders في أعلى الملف مع الـ API_BASE_URL هكذا:
+// import { API_BASE_URL, getJsonHeaders } from '../config/api';
+
 const handleSubmit = async (e) => {
   e.preventDefault();
 
   try {
-    const res = await fetch(
-      "http://207.180.209.101:5000/api/LoginAuthority/Login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+    // استخدمي الـ API_BASE_URL المستورد بدلاً من الرابط اليدوي الثابت
+    const res = await fetch(`${API_BASE_URL}/LoginAuthority/Login`, {
+      method: "POST",
+      headers: getJsonHeaders(), // استخدام الهيدرز الديناميكية لتخطي تحذير ngrok
 
-        body: JSON.stringify({
-          email,
-          password,
-          deviceToken: ""
-        })
-      }
-    );
+      body: JSON.stringify({
+        email,
+        password,
+        deviceToken: ""
+      })
+    });
 
     if (!res.ok) {
       const errorText = await res.text();
@@ -509,6 +575,9 @@ const handleSubmit = async (e) => {
     console.error(err);
   }
 };
+
+
+
   return (
     <div className="font-display bg-background-light dark:bg-background-dark min-h-screen">
       <div className="relative flex min-h-screen w-full flex-col items-center justify-center p-4">
