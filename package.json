@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "proxy": "https://legatine-barbera-mitochondrial.ngrok-free.dev",
-  "homepage": "https://menna-ali140.github.io/graduation3/",
+  
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
     "@testing-library/dom": "^10.4.1",
@@ -25,8 +25,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-  
-     "build": "CI=false react-scripts build",
+    "build": "react-scripts build",
+     
 
     "test": "react-scripts test",
     "predeploy": "npm run build",
