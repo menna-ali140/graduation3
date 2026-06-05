@@ -148,7 +148,7 @@ import IncidentMap from "./Page/IncidentMap";
 import AnalyticsPage from "./Page/AnalyticsPage";
 import NotificationsPage from "./Page/NotificationsPage";
 import SettingsPage from "./Page/SettingsPage";
-import AdminPage from "./Page/AdminPage";
+// import AdminPage from "./Page/AdminPage";
 import { IncidentProvider } from "./context/IncidentContext";
 import { AppProvider } from "./context/AppContext"; // ← أضفنا ده
 
@@ -181,7 +181,7 @@ function App() {
               <Route path="/analytics"      element={<AnalyticsPage />} />
               <Route path="/notifications"  element={<NotificationsPage />} />
               <Route path="/settings"       element={<SettingsPage />} />
-              <Route path="/admin"          element={<AdminPage />} />
+              {/* <Route path="/admin"          element={<AdminPage />} /> */}
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />

@@ -2278,11 +2278,41 @@ const STATUS_COLORS = {
   'In Progress': 'bg-blue-500/20 text-blue-800 dark:text-blue-300',
   Solved:        'bg-green-500/20 text-green-800 dark:text-green-300',
 };
+// const TIMELINE_ICONS = {
+//   Pending:       { icon: 'flag',          color: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400' },
+//   'In Progress': { icon: 'assignment_ind', color: 'bg-blue-500/20 text-blue-600 dark:text-blue-400' },
+//   Solved:        { icon: 'check_circle',  color: 'bg-green-500/20 text-green-600 dark:text-green-400' },
+// };
+
+
+
+
 const TIMELINE_ICONS = {
-  Pending:       { icon: 'flag',          color: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400' },
-  'In Progress': { icon: 'assignment_ind', color: 'bg-blue-500/20 text-blue-600 dark:text-blue-400' },
-  Solved:        { icon: 'check_circle',  color: 'bg-green-500/20 text-green-600 dark:text-green-400' },
+  Pending: {
+    icon: 'flag',
+    color: 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400'
+  },
+
+  'In Progress': {
+    icon: 'assignment_ind',
+    color: 'bg-blue-500/20 text-blue-600 dark:text-blue-400'
+  },
+
+  Solved: {
+    icon: 'check_circle',
+    color: 'bg-green-500/20 text-green-600 dark:text-green-400'
+  },
+
+  Resolved: {
+    icon: 'check_circle',
+    color: 'bg-green-500/20 text-green-600 dark:text-green-400'
+  }
 };
+
+
+
+
+
 
 const formatTimestamp = (ts) => {
   if (!ts) return '—';
@@ -2560,7 +2590,31 @@ const IncidentDetail = () => {
       const text = await res.text();
       const data = text ? JSON.parse(text) : null;
       if (!res.ok || !data) { setTimelineError(data?.message || `HTTP ${res.status}`); setTimeline([]); }
-      else { setTimeline(data?.timeline ?? []); }
+      // else { setTimeline(data?.timeline ?? []); }
+
+      else {
+  const mappedTimeline =
+    data?.timeline?.map((item) => ({
+      status: item.statusName,
+      message: item.message,
+      timestamp: item.time,
+      citizenName: item.citizenName,
+    })) || [];
+
+  setTimeline(mappedTimeline);
+}
+
+
+
+
+
+
+
+
+
+
+
+      
     } catch (e) {
       setTimelineError(`Could not load activity: ${e.message}`);
       setTimeline([]);
@@ -2743,7 +2797,14 @@ const IncidentDetail = () => {
                   ) : (
                     <div className="flex flex-col gap-6">
                       {timeline.map((item, index) => {
-                        const cfg = TIMELINE_ICONS[item.status] ?? TIMELINE_ICONS['Pending'];
+                        // const cfg = TIMELINE_ICONS[item.status] ?? TIMELINE_ICONS['Pending'];
+
+                      console.log(item);
+
+const cfg =
+  TIMELINE_ICONS[item.status] ??
+  TIMELINE_ICONS['Pending'];
+
                         return (
                           <div className="flex gap-4" key={index}>
                             <div className="flex flex-col items-center">
@@ -2754,6 +2815,7 @@ const IncidentDetail = () => {
                             </div>
                             <div className="pb-1">
                               <p className="font-medium text-text-light dark:text-text-dark text-sm">{item.message}</p>
+                              <p className="text-xs text-slate-500 mt-1">By: {item.citizenName}</p>
                               <p className="text-text-secondary-light dark:text-text-secondary-dark text-xs mt-0.5">{item.status} · {formatTimestamp(item.timestamp)}</p>
                             </div>
                           </div>

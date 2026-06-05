@@ -901,14 +901,14 @@ const LoginPage = () => {
               </form>
 
               {/* SignUp Link */}
-              <div className="text-center text-sm">
+              {/* <div className="text-center text-sm">
                 <p className="text-slate-600 dark:text-slate-400">
                   Don't have an account?{" "}
                   <Link to="/signup" className="text-[#022F72] font-semibold hover:underline">
                     Sign up here
                   </Link>
                 </p>
-              </div>
+              </div> */}
 
             </div>
           </div>

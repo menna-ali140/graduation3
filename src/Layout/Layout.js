@@ -267,7 +267,7 @@ const Layout = () => {
   };
 
   const handleLogout = () => {
-    if (window.confirm("هل أنت متأكد من رغبتك في تسجيل الخروج؟")) {
+    if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       navigate("/");
@@ -280,7 +280,7 @@ const Layout = () => {
     { to: "/map", icon: "map", label: "Map" },
     { to: "/analytics", icon: "analytics", label: "Analytics" },
     { to: "/settings", icon: "settings", label: "Settings" },
-    { to: "/admin", icon: "admin_panel_settings", label: "Admin" },
+    // { to: "/admin", icon: "admin_panel_settings", label: "Admin" },
   ];
 
   const NavContent = ({ onLinkClick }) => (

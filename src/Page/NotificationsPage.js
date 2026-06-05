@@ -124,8 +124,24 @@ const NotificationsPage = () => {
       );
 
       const data = await res.json();
+      console.log("API DATA:", data);
 
       setNotifications(Array.isArray(data) ? data : []);
+// setNotifications(
+//   Array.isArray(data)
+//     ? data.map(n => ({
+//         id: n.id,
+//         title: n.title,
+//         message: n.message,
+//         type: n.type,
+//         isRead: n.is_read,
+//         createdAt: n.created_at,
+//       }))
+//     : []
+// );
+
+
+
     } catch (err) {
       console.log("Notifications Error:", err);
     }
@@ -163,7 +179,7 @@ const NotificationsPage = () => {
       setNotifications((prev) =>
         prev.map((notif) =>
           notif.id === id
-            ? { ...notif, isRead: true }
+            ? { ...notif, is_read: true }
             : notif
         )
       );
@@ -189,7 +205,7 @@ const NotificationsPage = () => {
       setNotifications((prev) =>
         prev.map((notif) => ({
           ...notif,
-          isRead: true,
+          is_read: true,
         }))
       );
 
@@ -222,6 +238,18 @@ const NotificationsPage = () => {
 
     loadData();
   }, []);
+
+
+
+
+
+console.log("STATE:", notifications);
+
+
+
+
+  
+
 
   return (
     <div className="w-full p-8 overflow-y-auto">
@@ -264,7 +292,8 @@ const NotificationsPage = () => {
                 <div
                   key={notif.id}
                   className={`p-4 rounded-lg border transition-colors ${
-                    notif.isRead
+                    // notif.isRead
+                    notif.is_read
                       ? 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700'
                       : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700'
                   }`}
@@ -274,7 +303,8 @@ const NotificationsPage = () => {
                     {/* Icon */}
                     <div
                       className={`p-2 rounded-lg ${
-                        notif.isRead
+                        // notif.isRead
+                        notif.is_read
                           ? 'bg-gray-100 text-gray-600'
                           : 'bg-blue-100 text-blue-700'
                       }`}
@@ -286,23 +316,26 @@ const NotificationsPage = () => {
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
+                      <p className="text-xs text-gray-400">ID: {notif.id}</p>
                       <p className="text-gray-900 dark:text-white font-semibold">
                         {notif.title}
                       </p>
+
+                      <p className="text-xs text-gray-500 mt-1">Type: {notif.type}</p>
 
                       <p className="text-gray-600 dark:text-gray-300 mt-1">
                         {notif.message}
                       </p>
 
                       <p className="text-gray-500 dark:text-gray-400 text-sm mt-2">
-                        {new Date(notif.createdAt).toLocaleString()}
+                        {new Date(notif.created_at).toLocaleString()}
                       </p>
                     </div>
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
 
-                      {!notif.isRead && (
+                      {!notif.is_read && (
                         <button
                           onClick={() => markAsRead(notif.id)}
                           className="px-3 py-1 rounded bg-[#022F72] text-white text-sm font-medium hover:opacity-90"

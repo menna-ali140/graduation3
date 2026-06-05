@@ -1058,6 +1058,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { API_BASE_URL, getAuthHeaders } from '../config/api';
+import DepartmentBanner from "./DepartmentBanner";
 
 const SIRSDashboard = () => {
   const [stats, setStats] = useState([]);
@@ -1078,30 +1079,89 @@ const SIRSDashboard = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [totalRes, pendingRes, progressRes, solvedRes, volumeRes, reportsRes, activityRes] = await Promise.all([
+        const [totalRes, pendingRes, progressRes, solvedRes, highPriorityRes, volumeRes, reportsRes, activityRes] = await Promise.all([
           fetch(`${API_BASE_URL}/Dashboard/TotalCount`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/PendingCount`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/InProgressCount`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/SolvedCount`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/Dashboard/HighPriorityCount`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/IncidentVolume`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/LastFiveReports`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/RecentActions`, { headers: getAuthHeaders() }),
         ]);
+
+
+
+
+
+        
         const totalData = await totalRes.json();
         const pendingData = await pendingRes.json();
         const progressData = await progressRes.json();
         const solvedData = await solvedRes.json();
+        const highPriorityData = await highPriorityRes.json();
+        console.log("High Priority Response:", highPriorityData);
         const volumeDataAPI = await volumeRes.json();
         const reportsData = await reportsRes.json();
         const activityData = await activityRes.json();
 
-        setStats([
-          { label: "Total Reports", value: totalData.value || 0, border: "border-gray-200" },
-          { label: "Pending", value: pendingData.value || 0, border: "border-gray-200" },
-          { label: "In Progress", value: progressData.value || 0, border: "border-gray-200" },
-          { label: "Resolved", value: solvedData.value || 0, border: "border-gray-200" },
-          { label: "High Priority", value: 0, border: "border-red-500/50" },
-        ]);
+
+
+
+setStats([
+  {
+    label: "Total Reports",
+    value: totalData.value || 0,
+    border: "border-gray-200",
+    filterType: "all"
+  },
+  {
+    label: "Pending",
+    value: pendingData.value || 0,
+    border: "border-gray-200",
+    filterType: "status",
+    filterValue: "Pending"
+  },
+  {
+    label: "In Progress",
+    value: progressData.value || 0,
+    border: "border-gray-200",
+    filterType: "status",
+    filterValue: "In Progress"
+  },
+  {
+    label: "Resolved",
+    value: solvedData.value || 0,
+    border: "border-gray-200",
+    filterType: "status",
+    filterValue: "Resolved"
+  },
+{
+  label: "High Priority",
+  value: highPriorityData.highPriorityCount || 0,
+  border: "border-red-500/50",
+  filterType: "priority",
+  filterValue: "High"
+}
+]);
+
+
+
+
+
+
+
+
+
+
+
+        // setStats([
+        //   { label: "Total Reports", value: totalData.value || 0, border: "border-gray-200" },
+        //   { label: "Pending", value: pendingData.value || 0, border: "border-gray-200" },
+        //   { label: "In Progress", value: progressData.value || 0, border: "border-gray-200" },
+        //   { label: "Resolved", value: solvedData.value || 0, border: "border-gray-200" },
+        //   { label: "High Priority", value: 0, border: "border-red-500/50" },
+        // ]);
 
         const volumeArray = Array.isArray(volumeDataAPI) ? volumeDataAPI : [];
         setVolumeData(volumeArray.slice(-7).map((item) => ({ day: item.day, count: item.total })));
@@ -1141,6 +1201,7 @@ const SIRSDashboard = () => {
   return (
     <div className="w-full p-4 md:p-8 overflow-y-auto">
       <div className="max-w-7xl mx-auto">
+        <DepartmentBanner />
 
         {/* Header */}
         <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
@@ -1184,8 +1245,25 @@ const SIRSDashboard = () => {
 
         {/* Stats Cards — 2 cols mobile, 3 tablet, 5 desktop */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
-          {stats.map((stat, i) => (
-            <div key={i} className={`flex flex-col gap-2 rounded-xl p-4 md:p-6 bg-white dark:bg-gray-900/50 border ${stat.border}`}>
+          {/* {stats.map((stat, i) => (
+            <div key={i} className={`flex flex-col gap-2 rounded-xl p-4 md:p-6 bg-white dark:bg-gray-900/50 border ${stat.border}`}> */}
+
+{stats.map((stat, i) => (
+  <div
+    key={i}
+    onClick={() =>
+      navigate('/reports', {
+        state: {
+          filterType: stat.filterType,
+          filterValue: stat.filterValue
+        }
+      })
+    }
+    className={`cursor-pointer flex flex-col gap-2 rounded-xl p-4 md:p-6 bg-white dark:bg-gray-900/50 border ${stat.border}`}
+  >
+
+
+
               <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base font-medium leading-normal">{stat.label}</p>
               <p className="text-gray-900 dark:text-white tracking-light text-2xl md:text-3xl font-bold leading-tight">{stat.value}</p>
             </div>
