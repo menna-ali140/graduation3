@@ -20,9 +20,7 @@
 
 
 
-const API_HOST =
-  process.env.REACT_APP_API_HOST ||
-  "https://legatine-barbera-mitochondrial.ngrok-free.dev";
+const API_HOST =process.env.REACT_APP_API_HOST ||"https://legatine-barbera-mitochondrial.ngrok-free.dev";
 
 export const API_BASE_URL = `${API_HOST}/api`;
 

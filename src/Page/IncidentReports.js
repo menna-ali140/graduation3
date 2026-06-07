@@ -2314,6 +2314,12 @@ const IncidentReports = () => {
         }));
         setReportsData(mapped);
         console.log(mapped);
+        console.log(
+  mapped.map(r => ({
+    id: r.id,
+    time: r.time
+  }))
+);
   
        console.log(
   reportsArray.map(r => ({
@@ -2370,33 +2376,55 @@ const IncidentReports = () => {
 
 
 
+const parseDate = (timeStr) => {
+  if (!timeStr) return null;
 
+  const match = String(timeStr).match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4})\s*(\d{1,2}):(\d{1,2})?$/
+  );
+
+  if (match) {
+    const [, day, month, year, hour, minute] = match;
+
+    return new Date(
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+      Number(hour || 0),
+      Number(minute || 0)
+    );
+  }
+
+  return null;
+};
 
 
 
   
 
-  const parseDate = (timeStr) => {
-    if (!timeStr) return null;
-    const s = String(timeStr).trim();
-    let d = new Date(s);
-    if (!isNaN(d.getTime())) return d;
-    const slashMatch = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-    if (slashMatch) {
-      const [, a, b, year] = slashMatch;
-      d = new Date(parseInt(year), parseInt(b) - 1, parseInt(a));
-      if (!isNaN(d.getTime())) return d;
-      d = new Date(parseInt(year), parseInt(a) - 1, parseInt(b));
-      if (!isNaN(d.getTime())) return d;
-    }
-    const dashMatch = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
-    if (dashMatch) {
-      const [, year, month, day] = dashMatch;
-      d = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-      if (!isNaN(d.getTime())) return d;
-    }
-    return null;
-  };
+  // const parseDate = (timeStr) => {
+  //   if (!timeStr) return null;
+  //   const s = String(timeStr).trim();
+  //   let d = new Date(s);
+  //   if (!isNaN(d.getTime())) return d;
+   
+   
+  //   const slashMatch = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  //   if (slashMatch) {
+  //     const [, a, b, year] = slashMatch;
+  //     d = new Date(parseInt(year), parseInt(b) - 1, parseInt(a));
+  //     if (!isNaN(d.getTime())) return d;
+  //     d = new Date(parseInt(year), parseInt(a) - 1, parseInt(b));
+  //     if (!isNaN(d.getTime())) return d;
+  //   }
+  //   const dashMatch = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  //   if (dashMatch) {
+  //     const [, year, month, day] = dashMatch;
+  //     d = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  //     if (!isNaN(d.getTime())) return d;
+  //   }
+  //   return null;
+  // };
   
 useEffect(() => {
   if (!location.state) return;
@@ -2420,6 +2448,7 @@ useEffect(() => {
 
 
   useEffect(() => {
+    console.log(filters);
     let result = [...reportsData];
    if (debouncedSearchText.trim()) {
   const s = debouncedSearchText.trim();
@@ -2468,10 +2497,14 @@ useEffect(() => {
       todayStart.setHours(0, 0, 0, 0);
       result = result.filter(r => {
         const reportDate = parseDate(r.time);
+        console.log("Time =", r.time);
+     console.log("Parsed Date =", reportDate);
+
         if (!reportDate) return true;
         const rDay = new Date(reportDate);
         rDay.setHours(0, 0, 0, 0);
         const diffDays = Math.round((todayStart - rDay) / 86400000);
+        console.log("Diff Days =", diffDays);
         if (filters.dateRange === "Today")        return diffDays === 0;
         if (filters.dateRange === "Last 7 Days")  return diffDays >= 0 && diffDays <= 6;
         if (filters.dateRange === "Last 30 Days") return diffDays >= 0 && diffDays <= 29;
@@ -2540,8 +2573,8 @@ useEffect(() => {
 
   const FILTER_DEFS = [
     { label: 'Date Range',    options: ['All', 'Today', 'Last 7 Days', 'Last 30 Days'], key: 'dateRange' },
-    { label: 'Category',      options: ['All', 'Fire', 'Accident', 'Medical', 'Infrastructure'], key: 'category' },
-    { label: 'Status',        options: ['All', 'Pending', 'In Progress', 'Resolved', 'Closed'], key: 'status' },
+    { label: 'Category',      options: [ 'All','Fire' ], key: 'category' },
+    { label: 'Status',        options: ['All', 'Pending', 'In Progress', 'Resolved', ], key: 'status' },
     { label: 'Priority',      options: ['All', 'High', 'Medium', 'Low'], key: 'priority' },
     { label: 'Location',      options: locationOptions, key: 'location' },
     { label: 'AI Confidence', options: ['All', '80', '85', '90', '95'], key: 'aiConfidence' },

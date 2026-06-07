@@ -1054,7 +1054,336 @@
 
 
 
-import React, { useState, useEffect } from 'react';
+// import React, { useState, useEffect } from 'react';
+// import { Link, useNavigate } from 'react-router-dom';
+// import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+// import { API_BASE_URL, getAuthHeaders } from '../config/api';
+// import DepartmentBanner from "./DepartmentBanner";
+
+// const SIRSDashboard = () => {
+//   const [stats, setStats] = useState([]);
+//   const [reports, setReports] = useState([]);
+//   const [activities, setActivities] = useState([]);
+//   const [loading, setLoading] = useState(true);
+//   const [isMapExpanded, setIsMapExpanded] = useState(false);
+//   const [showNotifications, setShowNotifications] = useState(false);
+//   const navigate = useNavigate();
+//   const [volumeData, setVolumeData] = useState([]);
+//   const [notifications, setNotifications] = useState([
+//     { id: 1, text: "New High Priority Incident", time: "5 mins ago", icon: "priority_high", color: "text-red-600" },
+//     { id: 2, text: "Incident #1254 Resolved", time: "15 mins ago", icon: "check_circle", color: "text-green-600" },
+//     { id: 3, text: "New Report Submitted", time: "1 hour ago", icon: "flag", color: "text-yellow-600" }
+//   ]);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         setLoading(true);
+//         const [totalRes, pendingRes, progressRes, solvedRes, highPriorityRes, volumeRes, reportsRes, activityRes] = await Promise.all([
+//           fetch(`${API_BASE_URL}/Dashboard/TotalCount`, { headers: getAuthHeaders() }),
+//           fetch(`${API_BASE_URL}/Dashboard/PendingCount`, { headers: getAuthHeaders() }),
+//           fetch(`${API_BASE_URL}/Dashboard/InProgressCount`, { headers: getAuthHeaders() }),
+//           fetch(`${API_BASE_URL}/Dashboard/SolvedCount`, { headers: getAuthHeaders() }),
+//           fetch(`${API_BASE_URL}/Dashboard/HighPriorityCount`, { headers: getAuthHeaders() }),
+//           fetch(`${API_BASE_URL}/Dashboard/IncidentVolume`, { headers: getAuthHeaders() }),
+//           fetch(`${API_BASE_URL}/Dashboard/LastFiveReports`, { headers: getAuthHeaders() }),
+//           fetch(`${API_BASE_URL}/Dashboard/RecentActions`, { headers: getAuthHeaders() }),
+//         ]);
+
+
+
+
+
+        
+//         const totalData = await totalRes.json();
+//         const pendingData = await pendingRes.json();
+//         const progressData = await progressRes.json();
+//         const solvedData = await solvedRes.json();
+//         const highPriorityData = await highPriorityRes.json();
+//         console.log("High Priority Response:", highPriorityData);
+//         const volumeDataAPI = await volumeRes.json();
+//         const reportsData = await reportsRes.json();
+//         const activityData = await activityRes.json();
+
+
+
+
+// setStats([
+//   {
+//     label: "Total Reports",
+//     value: totalData.value || 0,
+//     border: "border-gray-200",
+//     filterType: "all"
+//   },
+//   {
+//     label: "Pending",
+//     value: pendingData.value || 0,
+//     border: "border-gray-200",
+//     filterType: "status",
+//     filterValue: "Pending"
+//   },
+//   {
+//     label: "In Progress",
+//     value: progressData.value || 0,
+//     border: "border-gray-200",
+//     filterType: "status",
+//     filterValue: "In Progress"
+//   },
+//   {
+//     label: "Resolved",
+//     value: solvedData.value || 0,
+//     border: "border-gray-200",
+//     filterType: "status",
+//     filterValue: "Resolved"
+//   },
+// {
+//   label: "High Priority",
+//   value: highPriorityData.highPriorityCount || 0,
+//   border: "border-red-500/50",
+//   filterType: "priority",
+//   filterValue: "High"
+// }
+// ]);
+
+
+
+
+
+
+
+
+
+
+
+//         // setStats([
+//         //   { label: "Total Reports", value: totalData.value || 0, border: "border-gray-200" },
+//         //   { label: "Pending", value: pendingData.value || 0, border: "border-gray-200" },
+//         //   { label: "In Progress", value: progressData.value || 0, border: "border-gray-200" },
+//         //   { label: "Resolved", value: solvedData.value || 0, border: "border-gray-200" },
+//         //   { label: "High Priority", value: 0, border: "border-red-500/50" },
+//         // ]);
+
+//         const volumeArray = Array.isArray(volumeDataAPI) ? volumeDataAPI : [];
+//         setVolumeData(volumeArray.slice(-7).map((item) => ({ day: item.day, count: item.total })));
+
+//         const reportsArray = Array.isArray(reportsData) ? reportsData : [];
+//         setReports(reportsArray.map((r) => ({
+//           id: r.report_ID, type: r.category, status: r.status, time: r.submitDate,
+//           badge: r.status === "Resolved" ? "bg-green-100 text-green-800" : r.status === "In Progress" ? "bg-orange-100 text-orange-800" : "bg-gray-100 text-gray-800",
+//         })));
+
+//         const activityArray = Array.isArray(activityData) ? activityData : [];
+//         setActivities(activityArray.map((a) => ({
+//           id: a.reportId,
+//           type: a.status === "Resolved" ? "check_circle" : a.status === "In Progress" ? "sync" : "schedule",
+//           bg: a.status === "Resolved" ? "bg-green-100" : a.status === "In Progress" ? "bg-orange-100" : "bg-gray-100",
+//           iconCol: a.status === "Resolved" ? "text-green-600" : a.status === "In Progress" ? "text-orange-600" : "text-gray-600",
+//           text: `${a.category} - ${a.status}`,
+//           time: new Date(a.time).toLocaleString(),
+//         })));
+//       } catch (err) {
+//         console.error("Dashboard Error:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+//     fetchData();
+//   }, []);
+
+//   if (loading) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center">
+//         <p className="text-slate-500">Loading dashboard...</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="w-full p-4 md:p-8 overflow-y-auto">
+//       <div className="max-w-7xl mx-auto">
+//         <DepartmentBanner />
+
+//         {/* Header */}
+//         <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
+//           <p className="text-gray-900 dark:text-white text-2xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Dashboard</p>
+//           <div className="flex items-center gap-4 relative">
+//             <button
+//               onClick={() => setShowNotifications(!showNotifications)}
+//               className="relative rounded-full p-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+//             >
+//               <span className="material-symbols-outlined text-gray-600 dark:text-gray-300">notifications</span>
+//               <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+//             </button>
+
+//             {showNotifications && (
+//               <div className="absolute right-0 top-12 w-72 md:w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-40">
+//                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+//                   <h3 className="text-gray-900 dark:text-white font-bold">Notifications</h3>
+//                 </div>
+//                 <div className="max-h-96 overflow-y-auto">
+//                   {notifications.length > 0 ? notifications.map((notif) => (
+//                     <div key={notif.id} className="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
+//                       <div className="flex items-start gap-3">
+//                         <span className={`material-symbols-outlined ${notif.color}`}>{notif.icon}</span>
+//                         <div className="flex-1">
+//                           <p className="text-gray-900 dark:text-gray-100 text-sm font-medium">{notif.text}</p>
+//                           <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">{notif.time}</p>
+//                         </div>
+//                       </div>
+//                     </div>
+//                   )) : (
+//                     <div className="p-4 text-center text-gray-500">No notifications</div>
+//                   )}
+//                 </div>
+//                 <div className="p-3 border-t border-gray-200 dark:border-gray-700 text-center">
+//                   <Link to="/notifications" className="text-primary text-sm font-medium hover:underline">View All</Link>
+//                 </div>
+//               </div>
+//             )}
+//           </div>
+//         </div>
+
+//         {/* Stats Cards — 2 cols mobile, 3 tablet, 5 desktop */}
+//         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
+//           {/* {stats.map((stat, i) => (
+//             <div key={i} className={`flex flex-col gap-2 rounded-xl p-4 md:p-6 bg-white dark:bg-gray-900/50 border ${stat.border}`}> */}
+
+// {stats.map((stat, i) => (
+//   <div
+//     key={i}
+//     onClick={() =>
+//       navigate('/reports', {
+//         state: {
+//           filterType: stat.filterType,
+//           filterValue: stat.filterValue
+//         }
+//       })
+//     }
+//     className={`cursor-pointer flex flex-col gap-2 rounded-xl p-4 md:p-6 bg-white dark:bg-gray-900/50 border ${stat.border}`}
+//   >
+
+
+
+//               <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base font-medium leading-normal">{stat.label}</p>
+//               <p className="text-gray-900 dark:text-white tracking-light text-2xl md:text-3xl font-bold leading-tight">{stat.value}</p>
+//             </div>
+//           ))}
+//         </div>
+
+//         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
+
+//           {/* Left */}
+//           <div className="lg:col-span-2 flex flex-col gap-6 md:gap-8">
+
+//             {/* Chart */}
+//             <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
+//               <h2 className="text-gray-900 dark:text-white text-base md:text-lg font-bold mb-4 md:mb-6">Incident Volume (Last 7 Days)</h2>
+//               <div className="h-48 md:h-64 w-full">
+//                 <ResponsiveContainer width="100%" height="100%">
+//                   <LineChart data={volumeData}>
+//                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+//                     <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} />
+//                     <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} />
+//                     <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }} />
+//                     <Line type="monotone" dataKey="count" stroke="#0284c7" strokeWidth={3} dot={{ r: 4, fill: '#0284c7' }} activeDot={{ r: 6 }} />
+//                   </LineChart>
+//                 </ResponsiveContainer>
+//               </div>
+//             </div>
+
+//             {/* Table */}
+//             <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800">
+//               <div className="flex justify-between items-center mb-4">
+//                 <h2 className="text-gray-900 dark:text-white text-base md:text-lg font-bold leading-tight">Latest Reports</h2>
+//                 <Link to="/reports" className="text-sm font-medium text-primary hover:underline">View All</Link>
+//               </div>
+//               <div className="overflow-x-auto -mx-4 md:mx-0">
+//                 <table className="w-full text-left min-w-[480px] md:min-w-0 px-4 md:px-0">
+//                   <thead>
+//                     <tr className="border-b border-gray-200 dark:border-gray-800">
+//                       <th className="px-3 md:px-4 py-3 text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Incident ID</th>
+//                       <th className="px-3 md:px-4 py-3 text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Type</th>
+//                       <th className="px-3 md:px-4 py-3 text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Status</th>
+//                       <th className="px-3 md:px-4 py-3 text-gray-600 dark:text-gray-400 text-xs md:text-sm font-medium">Reported Time</th>
+//                     </tr>
+//                   </thead>
+//                   <tbody>
+//                     {reports.map((r, idx) => (
+//                       <tr key={idx} className="border-b border-gray-200 dark:border-gray-800">
+//                         <td className="px-3 md:px-4 py-3 text-gray-800 dark:text-gray-200 text-xs md:text-sm">{r.id}</td>
+//                         <td className="px-3 md:px-4 py-3 text-gray-800 dark:text-gray-200 text-xs md:text-sm">{r.type}</td>
+//                         <td className="px-3 md:px-4 py-3">
+//                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${r.badge}`}>{r.status}</span>
+//                         </td>
+//                         <td className="px-3 md:px-4 py-3 text-gray-500 dark:text-gray-400 text-xs md:text-sm">{r.time}</td>
+//                       </tr>
+//                     ))}
+//                   </tbody>
+//                 </table>
+//               </div>
+//             </div>
+//           </div>
+
+//           {/* Right */}
+//           <div className="lg:col-span-1 flex flex-col gap-6 md:gap-8">
+
+//             {/* Hotspots */}
+//             <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800">
+//               <div className="flex justify-between items-center mb-4">
+//                 <h2 className="text-gray-900 dark:text-white text-base md:text-lg font-bold leading-tight">Incident Hotspots</h2>
+//                 <button onClick={() => navigate('/map')} className="text-sm font-medium text-primary hover:underline">Full Map</button>
+//               </div>
+//               <div className="aspect-square rounded-lg overflow-hidden">
+//                 <img
+//                   className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+//                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r"
+//                   alt="Heatmap"
+//                   onClick={() => navigate('/map')}
+//                 />
+//               </div>
+//             </div>
+
+//             {isMapExpanded && (
+//               <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+//                 <div className="relative w-full h-full">
+//                   <button onClick={() => setIsMapExpanded(false)} className="absolute top-4 right-4 z-50 bg-white dark:bg-gray-800 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+//                     <span className="material-symbols-outlined text-gray-900 dark:text-white">close</span>
+//                   </button>
+//                   <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r" alt="Full Map" />
+//                 </div>
+//               </div>
+//             )}
+
+//             {/* Activities */}
+//             <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800">
+//               <h2 className="text-gray-900 dark:text-white text-base md:text-lg font-bold leading-tight mb-4">Recent Activity</h2>
+//               <div className="flex flex-col gap-4">
+//                 {activities.map((act, i) => (
+//                   <div key={i} className="flex items-start gap-3">
+//                     <div className={`p-2 ${act.bg} rounded-full flex-shrink-0`}>
+//                       <span className={`material-symbols-outlined ${act.iconCol} text-base`}>{act.type}</span>
+//                     </div>
+//                     <div className="min-w-0">
+//                       <p className="text-sm text-gray-800 dark:text-gray-200 break-words">{act.text} <span className="font-bold">{act.id}</span></p>
+//                       <p className="text-xs text-gray-500 dark:text-gray-400">{act.time}</p>
+//                     </div>
+//                   </div>
+//                 ))}
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default SIRSDashboard;
+
+
+
+
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { API_BASE_URL, getAuthHeaders } from '../config/api';
@@ -1069,17 +1398,52 @@ const SIRSDashboard = () => {
   const [showNotifications, setShowNotifications] = useState(false);
   const navigate = useNavigate();
   const [volumeData, setVolumeData] = useState([]);
-  const [notifications, setNotifications] = useState([
-    { id: 1, text: "New High Priority Incident", time: "5 mins ago", icon: "priority_high", color: "text-red-600" },
-    { id: 2, text: "Incident #1254 Resolved", time: "15 mins ago", icon: "check_circle", color: "text-green-600" },
-    { id: 3, text: "New Report Submitted", time: "1 hour ago", icon: "flag", color: "text-yellow-600" }
-  ]);
+  
+  // ─── تعديل: جعل الإشعارات ديناميكية وجلبها من الـ API ───
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const dropdownRef = useRef(null);
+
+  // دالة تحديد الأيقونة واللون بناءً على الـ Status أو الـ Type القادم من الباك أند
+  const getNotificationConfig = (type) => {
+    if (!type) return { icon: "notifications", color: "text-blue-500" };
+    const t = type.toLowerCase();
+
+    if (t.includes("inprogress") || t.includes("progress")) {
+      return { icon: "pending", color: "text-amber-500" }; // لون برتقالي/أصفر للحالات القائمة
+    }
+    if (t.includes("solved") || t.includes("resolve")) {
+      return { icon: "check_circle", color: "text-emerald-500" }; // لون أخضر للمحلولة
+    }
+    if (t.includes("high") || t.includes("priority")) {
+      return { icon: "priority_high", color: "text-red-500" }; // علامة تعجب حمراء للأهمية القصوى
+    }
+    if (t.includes("report") || t.includes("submit")) {
+      return { icon: "flag", color: "text-purple-500" }; // علم للإشعار العادي أو البلاغات الجديدة
+    }
+
+    return { icon: "notifications", color: "text-blue-500" };
+  };
+
+  // إغلاق قائمة الإشعارات عند الضغط في أي مكان بالخارج
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [totalRes, pendingRes, progressRes, solvedRes, highPriorityRes, volumeRes, reportsRes, activityRes] = await Promise.all([
+        const [
+          totalRes, pendingRes, progressRes, solvedRes, highPriorityRes, 
+          volumeRes, reportsRes, activityRes, notifRes, unreadRes
+        ] = await Promise.all([
           fetch(`${API_BASE_URL}/Dashboard/TotalCount`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/PendingCount`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/InProgressCount`, { headers: getAuthHeaders() }),
@@ -1088,80 +1452,36 @@ const SIRSDashboard = () => {
           fetch(`${API_BASE_URL}/Dashboard/IncidentVolume`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/LastFiveReports`, { headers: getAuthHeaders() }),
           fetch(`${API_BASE_URL}/Dashboard/RecentActions`, { headers: getAuthHeaders() }),
+          // جلب الإشعارات والـ Count حقيقي وديناميكي هنا:
+          fetch(`${API_BASE_URL}/NotificationAuthority/my-notifications`, { headers: getAuthHeaders() }),
+          fetch(`${API_BASE_URL}/NotificationAuthority/unread-count`, { headers: getAuthHeaders() }),
         ]);
 
-
-
-
-
-        
         const totalData = await totalRes.json();
         const pendingData = await pendingRes.json();
         const progressData = await progressRes.json();
         const solvedData = await solvedRes.json();
         const highPriorityData = await highPriorityRes.json();
-        console.log("High Priority Response:", highPriorityData);
         const volumeDataAPI = await volumeRes.json();
         const reportsData = await reportsRes.json();
         const activityData = await activityRes.json();
+        const notifData = await notifRes.json();
+        const unreadData = await unreadRes.json();
 
+        // تعيين الإشعارات وترتيبها من الأحدث للأقدم
+        const sortedNotifs = Array.isArray(notifData)
+          ? [...notifData].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+          : [];
+        setNotifications(sortedNotifs);
+        setUnreadCount(unreadData.unreadCount || 0);
 
-
-
-setStats([
-  {
-    label: "Total Reports",
-    value: totalData.value || 0,
-    border: "border-gray-200",
-    filterType: "all"
-  },
-  {
-    label: "Pending",
-    value: pendingData.value || 0,
-    border: "border-gray-200",
-    filterType: "status",
-    filterValue: "Pending"
-  },
-  {
-    label: "In Progress",
-    value: progressData.value || 0,
-    border: "border-gray-200",
-    filterType: "status",
-    filterValue: "In Progress"
-  },
-  {
-    label: "Resolved",
-    value: solvedData.value || 0,
-    border: "border-gray-200",
-    filterType: "status",
-    filterValue: "Resolved"
-  },
-{
-  label: "High Priority",
-  value: highPriorityData.highPriorityCount || 0,
-  border: "border-red-500/50",
-  filterType: "priority",
-  filterValue: "High"
-}
-]);
-
-
-
-
-
-
-
-
-
-
-
-        // setStats([
-        //   { label: "Total Reports", value: totalData.value || 0, border: "border-gray-200" },
-        //   { label: "Pending", value: pendingData.value || 0, border: "border-gray-200" },
-        //   { label: "In Progress", value: progressData.value || 0, border: "border-gray-200" },
-        //   { label: "Resolved", value: solvedData.value || 0, border: "border-gray-200" },
-        //   { label: "High Priority", value: 0, border: "border-red-500/50" },
-        // ]);
+        setStats([
+          { label: "Total Reports", value: totalData.value || 0, border: "border-gray-200", filterType: "all" },
+          { label: "Pending", value: pendingData.value || 0, border: "border-gray-200", filterType: "status", filterValue: "Pending" },
+          { label: "In Progress", value: progressData.value || 0, border: "border-gray-200", filterType: "status", filterValue: "In Progress" },
+          { label: "Resolved", value: solvedData.value || 0, border: "border-gray-200", filterType: "status", filterValue: "Resolved" },
+          { label: "High Priority", value: highPriorityData.highPriorityCount || 0, border: "border-red-500/50", filterType: "priority", filterValue: "High" }
+        ]);
 
         const volumeArray = Array.isArray(volumeDataAPI) ? volumeDataAPI : [];
         setVolumeData(volumeArray.slice(-7).map((item) => ({ day: item.day, count: item.total })));
@@ -1190,6 +1510,9 @@ setStats([
     fetchData();
   }, []);
 
+  // أخذ أول 3 إشعارات فقط ديناميكياً للـ Dropdown
+  const latestThreeNotifications = notifications.slice(0, 3);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -1206,64 +1529,73 @@ setStats([
         {/* Header */}
         <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
           <p className="text-gray-900 dark:text-white text-2xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Dashboard</p>
-          <div className="flex items-center gap-4 relative">
+          
+          {/* الـ Container الخاص بالجرس والـ Dropdown */}
+          <div className="flex items-center gap-4 relative" ref={dropdownRef}>
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative rounded-full p-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="relative rounded-full p-2 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors focus:outline-none"
             >
               <span className="material-symbols-outlined text-gray-600 dark:text-gray-300">notifications</span>
-              <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 block h-2 w-2 rounded-full bg-red-500"></span>
+              )}
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 top-12 w-72 md:w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-40">
+              <div className="absolute right-0 top-12 w-72 md:w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 text-left">
                 <div className="p-4 border-b border-gray-200 dark:border-gray-700">
                   <h3 className="text-gray-900 dark:text-white font-bold">Notifications</h3>
                 </div>
+                
                 <div className="max-h-96 overflow-y-auto">
-                  {notifications.length > 0 ? notifications.map((notif) => (
-                    <div key={notif.id} className="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
-                      <div className="flex items-start gap-3">
-                        <span className={`material-symbols-outlined ${notif.color}`}>{notif.icon}</span>
-                        <div className="flex-1">
-                          <p className="text-gray-900 dark:text-gray-100 text-sm font-medium">{notif.text}</p>
-                          <p className="text-gray-500 dark:text-gray-400 text-xs mt-1">{notif.time}</p>
+                  {latestThreeNotifications.length > 0 ? latestThreeNotifications.map((notif) => {
+                    const config = getNotificationConfig(notif.type);
+                    return (
+                      <div key={notif.id} className="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors cursor-pointer">
+                        <div className="flex items-start gap-3">
+                          <span className={`material-symbols-outlined ${config.color}`}>{config.icon}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-gray-900 dark:text-gray-100 text-sm font-medium truncate">{notif.title || notif.text}</p>
+                            <p className="text-gray-500 dark:text-gray-400 text-xs mt-0.5 line-clamp-1">{notif.message}</p>
+                            <p className="text-gray-400 dark:text-gray-500 text-[10px] mt-1">
+                              {notif.created_at ? new Date(notif.created_at).toLocaleDateString() : 'Just now'}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )) : (
+                    );
+                  }) : (
                     <div className="p-4 text-center text-gray-500">No notifications</div>
                   )}
                 </div>
+                
+                {/* زرار الـ View All اللي هيوديكي لصفحة الإشعارات الكاملة */}
                 <div className="p-3 border-t border-gray-200 dark:border-gray-700 text-center">
-                  <Link to="/notifications" className="text-primary text-sm font-medium hover:underline">View All</Link>
+                  <Link to="/notifications" className="text-primary text-sm font-semibold hover:underline">
+                    View All
+                  </Link>
                 </div>
               </div>
             )}
           </div>
         </div>
 
-        {/* Stats Cards — 2 cols mobile, 3 tablet, 5 desktop */}
+        {/* Stats Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6 mb-8">
-          {/* {stats.map((stat, i) => (
-            <div key={i} className={`flex flex-col gap-2 rounded-xl p-4 md:p-6 bg-white dark:bg-gray-900/50 border ${stat.border}`}> */}
-
-{stats.map((stat, i) => (
-  <div
-    key={i}
-    onClick={() =>
-      navigate('/reports', {
-        state: {
-          filterType: stat.filterType,
-          filterValue: stat.filterValue
-        }
-      })
-    }
-    className={`cursor-pointer flex flex-col gap-2 rounded-xl p-4 md:p-6 bg-white dark:bg-gray-900/50 border ${stat.border}`}
-  >
-
-
-
+          {stats.map((stat, i) => (
+            <div
+              key={i}
+              onClick={() =>
+                navigate('/reports', {
+                  state: {
+                    filterType: stat.filterType,
+                    filterValue: stat.filterValue
+                  }
+                })
+              }
+              className={`cursor-pointer flex flex-col gap-2 rounded-xl p-4 md:p-6 bg-white dark:bg-gray-900/50 border ${stat.border}`}
+            >
               <p className="text-gray-600 dark:text-gray-400 text-sm md:text-base font-medium leading-normal">{stat.label}</p>
               <p className="text-gray-900 dark:text-white tracking-light text-2xl md:text-3xl font-bold leading-tight">{stat.value}</p>
             </div>
@@ -1271,10 +1603,8 @@ setStats([
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-
           {/* Left */}
           <div className="lg:col-span-2 flex flex-col gap-6 md:gap-8">
-
             {/* Chart */}
             <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800 shadow-sm">
               <h2 className="text-gray-900 dark:text-white text-base md:text-lg font-bold mb-4 md:mb-6">Incident Volume (Last 7 Days)</h2>
@@ -1326,7 +1656,6 @@ setStats([
 
           {/* Right */}
           <div className="lg:col-span-1 flex flex-col gap-6 md:gap-8">
-
             {/* Hotspots */}
             <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800">
               <div className="flex justify-between items-center mb-4">
@@ -1342,17 +1671,6 @@ setStats([
                 />
               </div>
             </div>
-
-            {isMapExpanded && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
-                <div className="relative w-full h-full">
-                  <button onClick={() => setIsMapExpanded(false)} className="absolute top-4 right-4 z-50 bg-white dark:bg-gray-800 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
-                    <span className="material-symbols-outlined text-gray-900 dark:text-white">close</span>
-                  </button>
-                  <img className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOfDqLE_f3pN59KtCgxChknR0RGa9SsN8JYW0KUPVd2RiirHNequIbcfqoyPqxIjLVH-U_UliaRj_aTjQtHvlV3WmluZhsjmn2lVqf2W0XcmOtWdHqazOBx9HHO9uOMIvleUEn1Di0_4UHUvzBkn0BZzs1o1hlucu3UHYx39N_HTF-jZ2qlhCIvu1471A7I0QFixBnOyXFHYKy91I3mNr-Ta0dDPsap9lMvlaipWU-VfUiIGXI0kB7kyTe-Xu_kRfg53T6N_Fzy43r" alt="Full Map" />
-                </div>
-              </div>
-            )}
 
             {/* Activities */}
             <div className="bg-white dark:bg-gray-900/50 rounded-xl p-4 md:p-6 border border-gray-200 dark:border-gray-800">
@@ -1379,11 +1697,6 @@ setStats([
 };
 
 export default SIRSDashboard;
-
-
-
-
-
 
 
 
